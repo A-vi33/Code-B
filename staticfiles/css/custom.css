@@ -1,0 +1,66 @@
+body.bg-gradient {
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    color: #fff;
+    min-height: 100vh;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    border-radius: 20px;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    max-width: 400px;
+    width: 100%;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.form-label {
+    color: #333;
+}
+
+.form-control {
+    border: 2px solid #ddd;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #573b8a;
+    box-shadow: 0 0 5px rgba(87, 59, 138, 0.5);
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #573b8a, #6d44b8);
+    border: none;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(45deg, #6d44b8, #8a5cd6);
+    transform: scale(1.05);
+}
+
+.text-gradient {
+    background: linear-gradient(45deg, #573b8a, #f1c40f);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.alert {
+    max-width: 400px;
+    margin: 20px auto;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+}
+
+.text-muted {
+    color: #666 !important;
+}
+
+a.text-decoration-none:hover {
+    text-decoration: underline;
+}

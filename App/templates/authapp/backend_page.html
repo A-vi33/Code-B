@@ -1,0 +1,295 @@
+{% extends 'authapp/base.html' %}
+{% load static %}
+
+{% block title %}Backend Page{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <header class="bg-light py-3 mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h3>CMS | Manage Home Page</h3>
+            <div>
+                <span>Hi {{ user.full_name }} | </span>
+                <a href="{% url 'logout' %}" class="text-primary">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar and Content -->
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-2">
+            <ul class="list-unstyled">
+                <li><a href="{% url 'backend_page' %}" class="text-primary">Manage Home Page</a></li>
+                <li><a href="#" class="text-primary">Manage About Us</a></li>
+                <li><a href="#" class="text-primary">Manage Our Work</a></li>
+                <li><a href="#" class="text-primary">Manage Features</a></li>
+                <li><a href="#" class="text-primary">Manage Projects</a></li>
+                <li><a href="#" class="text-primary">Manage Media</a></li>
+                <li><a href="#" class="text-primary">Manage Campaign</a></li>
+                <li><a href="#" class="text-primary">Manage Blog</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-10">
+            <!-- Tabs -->
+            <div class="mb-4">
+                <a href="#banner-slider" class="btn btn-primary me-2">Manage Image Slider</a>
+                <a href="#vision-mission" class="btn btn-primary me-2">Vision & Mission</a>
+                <a href="#statistics" class="btn btn-primary me-2">Manage Statistic</a>
+                <a href="#initiatives" class="btn btn-primary">Manage Initiatives</a>
+            </div>
+
+            <!-- Banner Slider Section -->
+            <div id="banner-slider" class="mb-5">
+                <h4>Manage Image Slider</h4>
+                <form method="POST" action="{% url 'manage_banner' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="image_url" class="form-label">Image URL:</label>
+                        <input type="text" class="form-control" id="image_url" name="image_url" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title:</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description:</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="order" class="form-label">Order:</label>
+                        <input type="number" class="form-control" id="order" name="order" value="0">
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="status" name="status" checked>
+                        <label for="status" class="form-check-label">Active</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+
+                <!-- Banner Table -->
+                <table class="table table-bordered mt-4">
+                    <thead>
+                        <tr>
+                            <th>Sr.No</th>
+                            <th>Image</th>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Order</th>
+                            <th>Status</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for banner in banners %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td><img src="{{ banner.image_url }}" alt="{{ banner.title }}" width="100"></td>
+                            <td>{{ banner.title }}</td>
+                            <td>{{ banner.description }}</td>
+                            <td>{{ banner.order }}</td>
+                            <td>{{ banner.status|yesno:"Active,Inactive" }}</td>
+                            <td><a href="#" class="btn btn-warning btn-sm">Edit</a></td>
+                            <td><a href="{% url 'delete_banner' banner.id %}" class="btn btn-danger btn-sm">Delete</a></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center">No banners available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Vision & Mission Section -->
+            <div id="vision-mission" class="mb-5">
+                <h4>Vision & Mission</h4>
+                <form method="POST" action="{% url 'manage_vision_mission' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="vision_title" class="form-label">Vision Title:</label>
+                        <input type="text" class="form-control" id="vision_title" name="vision_title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="vision_description" class="form-label">Vision Description:</label>
+                        <textarea class="form-control" id="vision_description" name="vision_description" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="mission_title" class="form-label">Mission Title:</label>
+                        <input type="text" class="form-control" id="mission_title" name="mission_title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="mission_description" class="form-label">Mission Description:</label>
+                        <textarea class="form-control" id="mission_description" name="mission_description" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+
+                <!-- Vision & Mission Table -->
+                <table class="table table-bordered mt-4">
+                    <thead>
+                        <tr>
+                            <th>Sr.No</th>
+                            <th>Vision Title</th>
+                            <th>Vision Description</th>
+                            <th>Mission Title</th>
+                            <th>Mission Description</th>
+                            <th>Last Updated</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vm in vision_missions %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ vm.vision_title }}</td>
+                            <td>{{ vm.vision_description }}</td>
+                            <td>{{ vm.mission_title }}</td>
+                            <td>{{ vm.mission_description }}</td>
+                            <td>{{ vm.last_updated }}</td>
+                            <td><a href="#" class="btn btn-warning btn-sm">Edit</a></td>
+                            <td><a href="{% url 'delete_vision_mission' vm.id %}" class="btn btn-danger btn-sm">Delete</a></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center">No vision & mission statements available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Statistics Section -->
+            <div id="statistics" class="mb-5">
+                <h4>Manage Statistics</h4>
+                <form method="POST" action="{% url 'manage_statistic' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="label" class="form-label">Label:</label>
+                        <input type="text" class="form-control" id="label" name="label" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="value" class="form-label">Value:</label>
+                        <input type="text" class="form-control" id="value" name="value" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="order" class="form-label">Order:</label>
+                        <input type="number" class="form-control" id="order" name="order" value="0">
+                    </div>
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Status:</label>
+                        <select class="form-control" id="status" name="status">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+
+                <!-- Statistics Table -->
+                <table class="table table-bordered mt-4">
+                    <thead>
+                        <tr>
+                            <th>Sr.No</th>
+                            <th>Label</th>
+                            <th>Value</th>
+                            <th>Order</th>
+                            <th>Status</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in statistics %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ stat.label }}</td>
+                            <td>{{ stat.value }}</td>
+                            <td>{{ stat.order }}</td>
+                            <td>{{ stat.status }}</td>
+                            <td><a href="#" class="btn btn-warning btn-sm">Edit</a></td>
+                            <td><a href="{% url 'delete_statistic' stat.id %}" class="btn btn-danger btn-sm">Delete</a></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center">No statistics available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Initiatives Section -->
+            <div id="initiatives">
+                <h4>Manage Initiatives</h4>
+                <form method="POST" action="{% url 'manage_initiative' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title:</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description:</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="image_url" class="form-label">Image URL:</label>
+                        <input type="text" class="form-control" id="image_url" name="image_url" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="order" class="form-label">Order:</label>
+                        <input type="number" class="form-control" id="order" name="order" value="0">
+                    </div>
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Status:</label>
+                        <select class="form-control" id="status" name="status">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+
+                <!-- Initiatives Table -->
+                <table class="table table-bordered mt-4">
+                    <thead>
+                        <tr>
+                            <th>Sr.No</th>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Image</th>
+                            <th>Order</th>
+                            <th>Status</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for initiative in initiatives %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ initiative.title }}</td>
+                            <td>{{ initiative.description }}</td>
+                            <td><img src="{{ initiative.image_url }}" alt="{{ initiative.title }}" width="100"></td>
+                            <td>{{ initiative.order }}</td>
+                            <td>{{ initiative.status }}</td>
+                            <td><a href="#" class="btn btn-warning btn-sm">Edit</a></td>
+                            <td><a href="{% url 'delete_initiative' initiative.id %}" class="btn btn-danger btn-sm">Delete</a></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center">No initiatives available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
