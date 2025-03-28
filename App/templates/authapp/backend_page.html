@@ -1,295 +1,568 @@
 {% extends 'authapp/base.html' %}
 {% load static %}
 
-{% block title %}Backend Page{% endblock %}
+{% block title %}Backend Dashboard - Positivity A_Z{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
+<style>
+    /* General Styling */
+    .backend-container {
+        font-family: 'Poppins', sans-serif;
+        background: url('{% static "images/backend-bg.jpg" %}') no-repeat center/cover;
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+    }
+    .backend-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 0;
+    }
+
+    /* Header */
+    .backend-header {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        padding: 1.5rem 2rem;
+        margin-bottom: 2.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 1;
+    }
+    .header-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #2c3e50;
+        background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .user-greeting {
+        font-size: 1rem;
+        color: #666;
+    }
+    .logout-link {
+        color: #ff6b6b;
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    .logout-link:hover {
+        color: #e55a5a;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        background: rgba(44, 62, 80, 0.9);
+        backdrop-filter: blur(10px);
+        padding: 2rem 1rem;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+    .sidebar ul {
+        list-style: none;
+        padding: 0;
+    }
+    .sidebar a {
+        color: #fff;
+        font-size: 1.1rem;
+        display: block;
+        padding: 0.75rem 1rem;
+        text-decoration: none;
+        transition: background 0.3s ease, color 0.3s ease;
+        border-radius: 8px;
+    }
+    .sidebar a:hover, .sidebar a.active {
+        background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+        color: white;
+    }
+
+    /* Main Content */
+    .main-content {
+        padding: 2.5rem;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 1;
+    }
+    .section-tabs {
+        margin-bottom: 2.5rem;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .tab-btn {
+        background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+        border: none;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+    }
+    .tab-btn:hover {
+        transform: scale(1.05);
+        background: linear-gradient(90deg, #e55a5a, #3db8b0);
+    }
+
+    /* Section Styling */
+    .section {
+        margin-bottom: 3.5rem;
+        animation: fadeIn 1s ease-out;
+    }
+    .section h4 {
+        font-size: 1.6rem;
+        font-weight: 600;
+        color: #ff6b6b;
+        margin-bottom: 1.5rem;
+    }
+    .form-container {
+        background: rgba(255, 255, 255, 0.8);
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    .form-container .btn-primary {
+        background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+        border: none;
+        padding: 0.5rem 1.5rem;
+        border-radius: 25px;
+    }
+    .form-container .btn-primary:hover {
+        background: linear-gradient(90deg, #e55a5a, #3db8b0);
+    }
+
+    /* Table Styling */
+    .table {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        width: 100%;
+    }
+    .table th {
+        background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+        color: white;
+        padding: 1rem;
+    }
+    .table td {
+        vertical-align: middle;
+        padding: 1rem;
+    }
+    .btn-warning, .btn-danger {
+        border-radius: 20px;
+        padding: 0.4rem 1.2rem;
+        font-size: 0.9rem;
+    }
+    .btn-warning:hover {
+        background: #e67e22;
+        border-color: #e67e22;
+    }
+    .btn-danger {
+        background: #dc3545;
+        border: none;
+    }
+    .btn-danger:hover {
+        background: #c82333;
+    }
+
+    /* Modal Styling */
+    .modal-content {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+    }
+    .modal-header {
+        border-bottom: none;
+    }
+    .modal-title {
+        color: #ff6b6b;
+    }
+
+    /* Thank You Image */
+    .thank-you-img {
+        width: 80px;
+        height: auto;
+        display: block;
+        margin: 0 auto 1.5rem;
+        transition: transform 0.3s ease;
+    }
+    .form-container:hover .thank-you-img {
+        transform: scale(1.1);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .sidebar {
+            height: auto;
+            position: relative;
+        }
+        .main-content {
+            padding: 1.5rem;
+        }
+        .table {
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
+<div class="backend-container">
     <!-- Header -->
-    <header class="bg-light py-3 mb-4">
-        <div class="d-flex justify-content-between align-items-center">
-            <h3>CMS | Manage Home Page</h3>
-            <div>
-                <span>Hi {{ user.full_name }} | </span>
-                <a href="{% url 'logout' %}" class="text-primary">Logout</a>
+    <header class="backend-header">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <h3 class="header-title">POSITIVITY A_Z | Manage Dashboard</h3>
+            <div class="user-greeting">
+                <span>Hi, {{ user.full_name }} | </span>
+                <a href="{% url 'logout' %}" class="logout-link">Logout</a>
             </div>
         </div>
     </header>
 
-    <!-- Sidebar and Content -->
-    <div class="row">
-        <!-- Sidebar -->
-        <div class="col-md-2">
-            <ul class="list-unstyled">
-                <li><a href="{% url 'backend_page' %}" class="text-primary">Manage Home Page</a></li>
-                <li><a href="#" class="text-primary">Manage About Us</a></li>
-                <li><a href="#" class="text-primary">Manage Our Work</a></li>
-                <li><a href="#" class="text-primary">Manage Features</a></li>
-                <li><a href="#" class="text-primary">Manage Projects</a></li>
-                <li><a href="#" class="text-primary">Manage Media</a></li>
-                <li><a href="#" class="text-primary">Manage Campaign</a></li>
-                <li><a href="#" class="text-primary">Manage Blog</a></li>
-            </ul>
-        </div>
-
-        <!-- Main Content -->
-        <div class="col-md-10">
-            <!-- Tabs -->
-            <div class="mb-4">
-                <a href="#banner-slider" class="btn btn-primary me-2">Manage Image Slider</a>
-                <a href="#vision-mission" class="btn btn-primary me-2">Vision & Mission</a>
-                <a href="#statistics" class="btn btn-primary me-2">Manage Statistic</a>
-                <a href="#initiatives" class="btn btn-primary">Manage Initiatives</a>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar">
+                <ul>
+                    <li><a href="{% url 'backend_page' %}" class="active">Manage Home Page</a></li>
+                    <li><a href="{% url 'manage_about_us' %}">Manage About Us</a></li>
+                    <li><a href="#">Manage Our Work</a></li>
+                    <li><a href="#">Manage Features</a></li>
+                    <li><a href="#">Manage Projects</a></li>
+                    <li><a href="#">Manage Media</a></li>
+                    <li><a href="#">Manage Campaign</a></li>
+                    <li><a href="#">Manage Blog</a></li>
+                </ul>
             </div>
 
-            <!-- Banner Slider Section -->
-            <div id="banner-slider" class="mb-5">
-                <h4>Manage Image Slider</h4>
-                <form method="POST" action="{% url 'manage_banner' %}">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="image_url" class="form-label">Image URL:</label>
-                        <input type="text" class="form-control" id="image_url" name="image_url" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="title" class="form-label">Title:</label>
-                        <input type="text" class="form-control" id="title" name="title" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description:</label>
-                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="order" class="form-label">Order:</label>
-                        <input type="number" class="form-control" id="order" name="order" value="0">
-                    </div>
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="status" name="status" checked>
-                        <label for="status" class="form-check-label">Active</label>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </form>
+            <!-- Main Content -->
+            <div class="col-md-10 main-content">
+                <!-- Tabs -->
+                <div class="section-tabs">
+                    <a href="#banner-slider" class="tab-btn">Manage Image Slider</a>
+                    <a href="#vision-mission" class="tab-btn">Vision & Mission</a>
+                    <a href="#statistics" class="tab-btn">Manage Statistics</a>
+                    <a href="#initiatives" class="tab-btn">Manage Initiatives</a>
+                </div>
 
-                <!-- Banner Table -->
-                <table class="table table-bordered mt-4">
-                    <thead>
-                        <tr>
-                            <th>Sr.No</th>
-                            <th>Image</th>
-                            <th>Title</th>
-                            <th>Description</th>
-                            <th>Order</th>
-                            <th>Status</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for banner in banners %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td><img src="{{ banner.image_url }}" alt="{{ banner.title }}" width="100"></td>
-                            <td>{{ banner.title }}</td>
-                            <td>{{ banner.description }}</td>
-                            <td>{{ banner.order }}</td>
-                            <td>{{ banner.status|yesno:"Active,Inactive" }}</td>
-                            <td><a href="#" class="btn btn-warning btn-sm">Edit</a></td>
-                            <td><a href="{% url 'delete_banner' banner.id %}" class="btn btn-danger btn-sm">Delete</a></td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="8" class="text-center">No banners available.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                <!-- Banner Slider Section -->
+                <div id="banner-slider" class="section">
+                    <h4>Manage Image Slider</h4>
+                    <div class="form-container">
+                        <img src="{% static 'images/thank-you.png' %}" alt="Thank You" class="thank-you-img">
+                        <form method="POST" action="{% url 'backend_page' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="banner_form" value="1">
+                            {{ banner_form.as_p }}
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                    <table class="table table-bordered mt-4">
+                        <thead>
+                            <tr>
+                                <th>Sr.No</th>
+                                <th>Image</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Order</th>
+                                <th>Status</th>
+                                <th>Edit</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for banner in banners %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>
+                                    {% if banner.image_url %}
+                                        <img src="{{ banner.image_url }}" alt="{{ banner.title }}" width="100">
+                                    {% else %}
+                                        No Image
+                                    {% endif %}
+                                </td>
+                                <td>{{ banner.title }}</td>
+                                <td>{{ banner.description }}</td>
+                                <td>{{ banner.order|default:"0" }}</td>
+                                <td>{{ banner.status|yesno:"Active,Inactive" }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editBannerModal{{ banner.id }}">Edit</button>
+                                    <div class="modal fade" id="editBannerModal{{ banner.id }}" tabindex="-1" aria-labelledby="editBannerModalLabel{{ banner.id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="editBannerModalLabel{{ banner.id }}">Edit Banner</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form method="POST" action="{% url 'edit_banner' banner.id %}">
+                                                        {% csrf_token %}
+                                                        {% with banner_form_instance=banner_form.__class__ %}
+                                                            {{ banner_form.as_p }}
+                                                        {% endwith %}
+                                                        <button type="submit" class="btn btn-primary">Update</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteBannerModal{{ banner.id }}">Delete</button>
+                    <!-- Delete Confirmation Modal -->
+                    <div class="modal fade" id="deleteBannerModal{{ banner.id }}" tabindex="-1" aria-labelledby="deleteBannerModalLabel{{ banner.id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteBannerModalLabel{{ banner.id }}">Confirm Deletion</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete the banner "{{ banner.title }}"?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <form method="POST" action="{% url 'delete_banner' banner.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this banner?');">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="8" class="text-center">No banners available.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
 
-            <!-- Vision & Mission Section -->
-            <div id="vision-mission" class="mb-5">
-                <h4>Vision & Mission</h4>
-                <form method="POST" action="{% url 'manage_vision_mission' %}">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="vision_title" class="form-label">Vision Title:</label>
-                        <input type="text" class="form-control" id="vision_title" name="vision_title" required>
+                <!-- Vision & Mission Section -->
+                <div id="vision-mission" class="section">
+                    <h4>Vision & Mission</h4>
+                    <div class="form-container">
+                        <img src="{% static 'images/thank-you.png' %}" alt="Thank You" class="thank-you-img">
+                        <form method="POST" action="{% url 'manage_vision_mission' %}">
+                            {% csrf_token %}
+                            {{ vision_mission_form.as_p }}
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
                     </div>
-                    <div class="mb-3">
-                        <label for="vision_description" class="form-label">Vision Description:</label>
-                        <textarea class="form-control" id="vision_description" name="vision_description" rows="3" required></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="mission_title" class="form-label">Mission Title:</label>
-                        <input type="text" class="form-control" id="mission_title" name="mission_title" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="mission_description" class="form-label">Mission Description:</label>
-                        <textarea class="form-control" id="mission_description" name="mission_description" rows="3" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </form>
+                    <table class="table table-bordered mt-4">
+                        <thead>
+                            <tr>
+                                <th>Sr.No</th>
+                                <th>Vision Title</th>
+                                <th>Vision Description</th>
+                                <th>Mission Title</th>
+                                <th>Mission Description</th>
+                                <th>Last Updated</th>
+                                <th>Edit</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for vm in vision_missions %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ vm.vision_title }}</td>
+                                <td>{{ vm.vision_description }}</td>
+                                <td>{{ vm.mission_title }}</td>
+                                <td>{{ vm.mission_description }}</td>
+                                <td>{{ vm.last_updated }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editVisionMissionModal{{ vm.id }}">Edit</button>
+                                    <div class="modal fade" id="editVisionMissionModal{{ vm.id }}" tabindex="-1" aria-labelledby="editVisionMissionModalLabel{{ vm.id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="editVisionMissionModalLabel{{ vm.id }}">Edit Vision & Mission</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form method="POST" action="{% url 'edit_vision_mission' vm.id %}">
+                                                        {% csrf_token %}
+                                                        {{ vision_mission_form.as_p }}
+                                                        <button type="submit" class="btn btn-primary">Update</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <form method="POST" action="{% url 'delete_vision_mission' vm.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this entry?');">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="8" class="text-center">No vision & mission statements available.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
 
-                <!-- Vision & Mission Table -->
-                <table class="table table-bordered mt-4">
-                    <thead>
-                        <tr>
-                            <th>Sr.No</th>
-                            <th>Vision Title</th>
-                            <th>Vision Description</th>
-                            <th>Mission Title</th>
-                            <th>Mission Description</th>
-                            <th>Last Updated</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for vm in vision_missions %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ vm.vision_title }}</td>
-                            <td>{{ vm.vision_description }}</td>
-                            <td>{{ vm.mission_title }}</td>
-                            <td>{{ vm.mission_description }}</td>
-                            <td>{{ vm.last_updated }}</td>
-                            <td><a href="#" class="btn btn-warning btn-sm">Edit</a></td>
-                            <td><a href="{% url 'delete_vision_mission' vm.id %}" class="btn btn-danger btn-sm">Delete</a></td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="8" class="text-center">No vision & mission statements available.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                <!-- Statistics Section -->
+                <div id="statistics" class="section">
+                    <h4>Manage Statistics</h4>
+                    <div class="form-container">
+                        <img src="{% static 'images/thank-you.png' %}" alt="Thank You" class="thank-you-img">
+                        <form method="POST" action="{% url 'manage_statistic' %}">
+                            {% csrf_token %}
+                            {{ statistic_form.as_p }}
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                    <table class="table table-bordered mt-4">
+                        <thead>
+                            <tr>
+                                <th>Sr.No</th>
+                                <th>Label</th>
+                                <th>Value</th>
+                                <th>Order</th>
+                                <th>Status</th>
+                                <th>Edit</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stat in statistics %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ stat.label }}</td>
+                                <td>{{ stat.value }}</td>
+                                <td>{{ stat.order }}</td>
+                                <td>{{ stat.status }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editStatisticModal{{ stat.id }}">Edit</button>
+                                    <div class="modal fade" id="editStatisticModal{{ stat.id }}" tabindex="-1" aria-labelledby="editStatisticModalLabel{{ stat.id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="editStatisticModalLabel{{ stat.id }}">Edit Statistic</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form method="POST" action="{% url 'edit_statistic' stat.id %}">
+                                                        {% csrf_token %}
+                                                        {{ statistic_form.as_p }}
+                                                        <button type="submit" class="btn btn-primary">Update</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <form method="POST" action="{% url 'delete_statistic' stat.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this statistic?');">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center">No statistics available.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
 
-            <!-- Statistics Section -->
-            <div id="statistics" class="mb-5">
-                <h4>Manage Statistics</h4>
-                <form method="POST" action="{% url 'manage_statistic' %}">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="label" class="form-label">Label:</label>
-                        <input type="text" class="form-control" id="label" name="label" required>
+                <!-- Initiatives Section -->
+                <div id="initiatives" class="section">
+                    <h4>Manage Initiatives</h4>
+                    <div class="form-container">
+                        <img src="{% static 'images/thank-you.png' %}" alt="Thank You" class="thank-you-img">
+                        <form method="POST" action="{% url 'manage_initiative' %}">
+                            {% csrf_token %}
+                            {{ initiative_form.as_p }}
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
                     </div>
-                    <div class="mb-3">
-                        <label for="value" class="form-label">Value:</label>
-                        <input type="text" class="form-control" id="value" name="value" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="order" class="form-label">Order:</label>
-                        <input type="number" class="form-control" id="order" name="order" value="0">
-                    </div>
-                    <div class="mb-3">
-                        <label for="status" class="form-label">Status:</label>
-                        <select class="form-control" id="status" name="status">
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </form>
-
-                <!-- Statistics Table -->
-                <table class="table table-bordered mt-4">
-                    <thead>
-                        <tr>
-                            <th>Sr.No</th>
-                            <th>Label</th>
-                            <th>Value</th>
-                            <th>Order</th>
-                            <th>Status</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for stat in statistics %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ stat.label }}</td>
-                            <td>{{ stat.value }}</td>
-                            <td>{{ stat.order }}</td>
-                            <td>{{ stat.status }}</td>
-                            <td><a href="#" class="btn btn-warning btn-sm">Edit</a></td>
-                            <td><a href="{% url 'delete_statistic' stat.id %}" class="btn btn-danger btn-sm">Delete</a></td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="7" class="text-center">No statistics available.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Initiatives Section -->
-            <div id="initiatives">
-                <h4>Manage Initiatives</h4>
-                <form method="POST" action="{% url 'manage_initiative' %}">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="title" class="form-label">Title:</label>
-                        <input type="text" class="form-control" id="title" name="title" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description:</label>
-                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="image_url" class="form-label">Image URL:</label>
-                        <input type="text" class="form-control" id="image_url" name="image_url" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="order" class="form-label">Order:</label>
-                        <input type="number" class="form-control" id="order" name="order" value="0">
-                    </div>
-                    <div class="mb-3">
-                        <label for="status" class="form-label">Status:</label>
-                        <select class="form-control" id="status" name="status">
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </form>
-
-                <!-- Initiatives Table -->
-                <table class="table table-bordered mt-4">
-                    <thead>
-                        <tr>
-                            <th>Sr.No</th>
-                            <th>Title</th>
-                            <th>Description</th>
-                            <th>Image</th>
-                            <th>Order</th>
-                            <th>Status</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for initiative in initiatives %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ initiative.title }}</td>
-                            <td>{{ initiative.description }}</td>
-                            <td><img src="{{ initiative.image_url }}" alt="{{ initiative.title }}" width="100"></td>
-                            <td>{{ initiative.order }}</td>
-                            <td>{{ initiative.status }}</td>
-                            <td><a href="#" class="btn btn-warning btn-sm">Edit</a></td>
-                            <td><a href="{% url 'delete_initiative' initiative.id %}" class="btn btn-danger btn-sm">Delete</a></td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="8" class="text-center">No initiatives available.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                    <table class="table table-bordered mt-4">
+                        <thead>
+                            <tr>
+                                <th>Sr.No</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Image</th>
+                                <th>Order</th>
+                                <th>Status</th>
+                                <th>Edit</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for initiative in initiatives %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ initiative.title }}</td>
+                                <td>{{ initiative.description }}</td>
+                                <td><img src="{{ initiative.image_url }}" alt="{{ initiative.title }}" width="100"></td>
+                                <td>{{ initiative.order }}</td>
+                                <td>{{ initiative.status }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editInitiativeModal{{ initiative.id }}">Edit</button>
+                                    <div class="modal fade" id="editInitiativeModal{{ initiative.id }}" tabindex="-1" aria-labelledby="editInitiativeModalLabel{{ initiative.id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="editInitiativeModalLabel{{ initiative.id }}">Edit Initiative</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form method="POST" action="{% url 'edit_initiative' initiative.id %}">
+                                                        {% csrf_token %}
+                                                        {{ initiative_form.as_p }}
+                                                        <button type="submit" class="btn btn-primary">Update</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <form method="POST" action="{% url 'delete_initiative' initiative.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this initiative?');">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="8" class="text-center">No initiatives available.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
 {% endblock %}

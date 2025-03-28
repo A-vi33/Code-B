@@ -1,0 +1,785 @@
+{% extends 'authapp/base.html' %}
+{% load static %}
+
+{% block title %}Manage About Us - Positivity A-Z{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f8fafc;
+            font-family: 'Poppins', sans-serif;
+            color: #2d3748;
+            line-height: 1.6;
+        }
+
+        /* Header Styling */
+        .header {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 20px 35px;
+            border-left: 5px solid #4c78ff;
+            margin-bottom: 25px;
+        }
+
+        .header h3 {
+            font-weight: 700;
+            color: #4c78ff;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            background: linear-gradient(135deg, #4c78ff 0%, #1e3a8a 100%);
+            border-radius: 12px;
+            padding: 25px;
+            height: fit-content;
+            box-shadow: 0 6px 20px rgba(76, 120, 255, 0.15);
+            position: sticky;
+            top: 20px;
+        }
+
+        .sidebar a {
+            color: #ffffff;
+            font-weight: 500;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+            text-decoration: none;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background-color: rgba(255, 255, 255, 0.25);
+            transform: translateX(5px);
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            border-bottom: none;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .nav-tabs .nav-link {
+            border: none;
+            padding: 12px 25px;
+            font-weight: 600;
+            color: #6b7280;
+            background: #ffffff;
+            border-radius: 50px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs .nav-link:hover {
+            background: #edf2ff;
+            color: #4c78ff;
+            transform: scale(1.05);
+        }
+
+        .nav-tabs .nav-link.active {
+            background: #4c78ff;
+            color: #ffffff;
+            box-shadow: 0 5px 15px rgba(76, 120, 255, 0.3);
+        }
+
+        /* Card Styling */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 35px;
+            background: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-header {
+            background: linear-gradient(90deg, #f8fafc, #ffffff);
+            border-bottom: none;
+            padding: 25px;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .card-header h4 {
+            font-weight: 700;
+            color: #2d3748;
+            margin: 0;
+        }
+
+        /* Form Elements */
+        .form-control, .form-control-file {
+            border-radius: 10px;
+            border: 1px solid #d1d5db;
+            padding: 12px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-control-file:focus {
+            border-color: #4c78ff;
+            box-shadow: 0 0 8px rgba(76, 120, 255, 0.25);
+            outline: none;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .errorlist {
+            color: #dc3545;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        /* Button Styling */
+        .btn-primary {
+            background: #4c78ff;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
+            font-weight: 600;
+            color: #ffffff;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: #3b5ce0;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 18px;
+            font-weight: 600;
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 18px;
+            font-weight: 600;
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        /* Table Styling */
+        .table {
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .table th {
+            background: #f1f5f9;
+            color: #2d3748;
+            font-weight: 700;
+            padding: 15px;
+        }
+
+        .table td {
+            vertical-align: middle;
+            padding: 15px;
+        }
+
+        /* Alerts */
+        .alert {
+            border-radius: 10px;
+            padding: 15px 20px;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .alert-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: static;
+                margin-bottom: 20px;
+            }
+            .nav-tabs {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <!-- Header -->
+        <header class="header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3>Positivity A-Z | Manage About Us</h3>
+                <div>
+                    <span class="text-muted">Hi, {{ user.full_name }} | </span>
+                    <a href="{% url 'logout' %}" class="text-primary fw-bold">Logout</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Display Messages -->
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Sidebar and Content -->
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2">
+                <div class="sidebar">
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'backend_page' %}">Manage Home Page</a></li>
+                        <li><a href="{% url 'manage_about_us' %}" class="active">Manage About Us</a></li>
+                        <li><a href="#">Manage Our Work</a></li>
+                        <li><a href="#">Manage Features</a></li>
+                        <li><a href="#">Manage Projects</a></li>
+                        <li><a href="#">Manage Media</a></li>
+                        <li><a href="#">Manage Campaign</a></li>
+                        <li><a href="#">Manage Blog</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10">
+                <!-- Tabs -->
+                <ul class="nav nav-tabs">
+                    <li class="nav-item"><a class="nav-link active" href="#introduction">Introduction</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#mission-vision">Mission & Vision</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#our-story">Our Story</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#core-values">Core Values</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#programs">Programs</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#team-members">Team Members</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#impact">Impact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#cta">Call to Action</a></li>
+                </ul>
+
+                <!-- Introduction Section -->
+                <div id="introduction" class="card">
+                    <div class="card-header"><h4>Introduction</h4></div>
+                    <div class="card-body">
+                        <table class="table table-bordered mb-4">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if about_us %}
+                                    <tr>
+                                        <td>{{ about_us.introduction_title }}</td>
+                                        <td>{{ about_us.introduction_description }}</td>
+                                        <td>
+                                            <a href="{% url 'edit_about_us' about_us.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                            <a href="{% url 'delete_about_us' about_us.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr><td colspan="3" class="text-center">No introduction available.</td></tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                        <form method="POST" action="{% url 'manage_about_us' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="form_type" value="introduction">
+                            {{ introduction_form.introduction_title.errors }}
+                            <div class="mb-3">
+                                <label for="introduction_title" class="form-label">Title</label>
+                                {{ introduction_form.introduction_title }}
+                            </div>
+                            {{ introduction_form.introduction_description.errors }}
+                            <div class="mb-3">
+                                <label for="introduction_description" class="form-label">Description</label>
+                                {{ introduction_form.introduction_description }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Mission and Vision Section -->
+                <div id="mission-vision" class="card">
+                    <div class="card-header"><h4>Mission and Vision</h4></div>
+                    <div class="card-body">
+                        <table class="table table-bordered mb-4">
+                            <thead>
+                                <tr>
+                                    <th>Mission Title</th>
+                                    <th>Mission Description</th>
+                                    <th>Vision Title</th>
+                                    <th>Vision Description</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if about_us %}
+                                    <tr>
+                                        <td>{{ about_us.mission_title }}</td>
+                                        <td>{{ about_us.mission_description }}</td>
+                                        <td>{{ about_us.vision_title }}</td>
+                                        <td>{{ about_us.vision_description }}</td>
+                                        <td>
+                                            <a href="{% url 'edit_about_us' about_us.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                            <a href="{% url 'delete_about_us' about_us.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr><td colspan="5" class="text-center">No mission and vision available.</td></tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                        <form method="POST" action="{% url 'manage_about_us' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="form_type" value="mission_vision">
+                            {{ mission_vision_form.mission_title.errors }}
+                            <div class="mb-3">
+                                <label for="mission_title" class="form-label">Mission Title</label>
+                                {{ mission_vision_form.mission_title }}
+                            </div>
+                            {{ mission_vision_form.mission_description.errors }}
+                            <div class="mb-3">
+                                <label for="mission_description" class="form-label">Mission Description</label>
+                                {{ mission_vision_form.mission_description }}
+                            </div>
+                            {{ mission_vision_form.vision_title.errors }}
+                            <div class="mb-3">
+                                <label for="vision_title" class="form-label">Vision Title</label>
+                                {{ mission_vision_form.vision_title }}
+                            </div>
+                            {{ mission_vision_form.vision_description.errors }}
+                            <div class="mb-3">
+                                <label for="vision_description" class="form-label">Vision Description</label>
+                                {{ mission_vision_form.vision_description }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Our Story Section -->
+                <div id="our-story" class="card">
+                    <div class="card-header"><h4>Our Story</h4></div>
+                    <div class="card-body">
+                        <table class="table table-bordered mb-4">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Milestones</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if about_us %}
+                                    <tr>
+                                        <td>{{ about_us.history_title }}</td>
+                                        <td>{{ about_us.history_description }}</td>
+                                        <td>
+                                            <ul>
+                                                {% for milestone in about_us.get_milestones_list %}
+                                                    <li>{{ milestone }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'edit_about_us' about_us.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                            <a href="{% url 'delete_about_us' about_us.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr><td colspan="4" class="text-center">No story available.</td></tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                        <form method="POST" action="{% url 'manage_about_us' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="form_type" value="history">
+                            {{ history_form.history_title.errors }}
+                            <div class="mb-3">
+                                <label for="history_title" class="form-label">Title</label>
+                                {{ history_form.history_title }}
+                            </div>
+                            {{ history_form.history_description.errors }}
+                            <div class="mb-3">
+                                <label for="history_description" class="form-label">Description</label>
+                                {{ history_form.history_description }}
+                            </div>
+                            {{ history_form.milestones.errors }}
+                            <div class="mb-3">
+                                <label for="milestones" class="form-label">Milestones (one per line)</label>
+                                {{ history_form.milestones }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Core Values Section -->
+                <div id="core-values" class="card">
+                    <div class="card-header"><h4>Core Values</h4></div>
+                    <div class="card-body">
+                        <table class="table table-bordered mb-4">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Values</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if about_us %}
+                                    <tr>
+                                        <td>{{ about_us.core_values_title }}</td>
+                                        <td>
+                                            <ul>
+                                                {% for value in about_us.get_core_values_list %}
+                                                    <li>{{ value }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'edit_about_us' about_us.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                            <a href="{% url 'delete_about_us' about_us.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr><td colspan="3" class="text-center">No core values available.</td></tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                        <form method="POST" action="{% url 'manage_about_us' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="form_type" value="core_values">
+                            {{ core_values_form.core_values_title.errors }}
+                            <div class="mb-3">
+                                <label for="core_values_title" class="form-label">Title</label>
+                                {{ core_values_form.core_values_title }}
+                            </div>
+                            {{ core_values_form.core_values.errors }}
+                            <div class="mb-3">
+                                <label for="core_values" class="form-label">Values (one per line)</label>
+                                {{ core_values_form.core_values }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Programs Section -->
+                <div id="programs" class="card">
+                    <div class="card-header"><h4>Programs</h4></div>
+                    <div class="card-body">
+                        <table class="table table-bordered mb-4">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Programs</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if about_us %}
+                                    <tr>
+                                        <td>{{ about_us.programs_title }}</td>
+                                        <td>
+                                            <ul>
+                                                {% for program in about_us.get_programs_list %}
+                                                    <li>{{ program }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'edit_about_us' about_us.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                            <a href="{% url 'delete_about_us' about_us.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr><td colspan="3" class="text-center">No programs available.</td></tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                        <form method="POST" action="{% url 'manage_about_us' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="form_type" value="programs">
+                            {{ programs_form.programs_title.errors }}
+                            <div class="mb-3">
+                                <label for="programs_title" class="form-label">Title</label>
+                                {{ programs_form.programs_title }}
+                            </div>
+                            {{ programs_form.programs.errors }}
+                            <div class="mb-3">
+                                <label for="programs" class="form-label">Programs (one per line)</label>
+                                {{ programs_form.programs }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Team Members Section -->
+                <div id="team-members" class="card">
+                    <div class="card-header"><h4>Team Members</h4></div>
+                    <div class="card-body">
+                        <table class="table table-bordered mb-4">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Name</th>
+                                    <th>Role</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if about_us %}
+                                    <tr>
+                                        <td>{{ about_us.team_title }}</td>
+                                        <td colspan="2">
+                                            <ul>
+                                                {% for member in about_us.team_members.all %}
+                                                    <li>{{ member.name }} - {{ member.role }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'edit_about_us' about_us.id %}" class="btn btn-warning btn-sm">Edit Title</a>
+                                            <a href="{% url 'delete_about_us' about_us.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
+                                        </td>
+                                    </tr>
+                                    {% for member in about_us.team_members.all %}
+                                        <tr>
+                                            <td></td>
+                                            <td>{{ member.name }}</td>
+                                            <td>{{ member.role }}</td>
+                                            <td>
+                                                <a href="{% url 'edit_team_member' member.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                                <a href="{% url 'delete_team_member' member.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this team member?');">Delete</a>
+                                            </td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr><td colspan="4" class="text-center">No team members available.</td></tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr><td colspan="4" class="text-center">No team members available.</td></tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                        <form method="POST" action="{% url 'manage_about_us' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="form_type" value="team_title">
+                            {{ team_title_form.team_title.errors }}
+                            <div class="mb-3">
+                                <label for="team_title" class="form-label">Title</label>
+                                {{ team_title_form.team_title }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Title</button>
+                        </form>
+                        <form method="POST" action="{% url 'manage_team_member' %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ team_member_form.name.errors }}
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Name</label>
+                                {{ team_member_form.name }}
+                            </div>
+                            {{ team_member_form.role.errors }}
+                            <div class="mb-3">
+                                <label for="role" class="form-label">Role</label>
+                                {{ team_member_form.role }}
+                            </div>
+                            {{ team_member_form.image.errors }}
+                            <div class="mb-3">
+                                <label for="image" class="form-label">Upload Image</label>
+                                {{ team_member_form.image }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Team Member</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Impact Section -->
+                <div id="impact" class="card">
+                    <div class="card-header"><h4>Impact</h4></div>
+                    <div class="card-body">
+                        <table class="table table-bordered mb-4">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if about_us %}
+                                    <tr>
+                                        <td>{{ about_us.impact_title }}</td>
+                                        <td>
+                                            <p>{{ about_us.impact_description|linebreaks }}</p>
+                                            <ul>
+                                                {% for impact in about_us.get_impact_list %}
+                                                    <li>{{ impact }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'edit_about_us' about_us.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                            <a href="{% url 'delete_about_us' about_us.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr><td colspan="3" class="text-center">No impact available.</td></tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                        <form method="POST" action="{% url 'manage_about_us' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="form_type" value="impact">
+                            {{ impact_form.impact_title.errors }}
+                            <div class="mb-3">
+                                <label for="impact_title" class="form-label">Title</label>
+                                {{ impact_form.impact_title }}
+                            </div>
+                            {{ impact_form.impact_description.errors }}
+                            <div class="mb-3">
+                                <label for="impact_description" class="form-label">Description (include achievements, one per line)</label>
+                                {{ impact_form.impact_description }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Call to Action Section -->
+                <div id="cta" class="card">
+                    <div class="card-header"><h4>Call to Action</h4></div>
+                    <div class="card-body">
+                        <table class="table table-bordered mb-4">
+                            <thead>
+                                <tr>
+                                    <th>Text</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if about_us %}
+                                    <tr>
+                                        <td>{{ about_us.cta_text }}</td>
+                                        <td>
+                                            <a href="{% url 'edit_about_us' about_us.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                            <a href="{% url 'delete_about_us' about_us.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr><td colspan="2" class="text-center">No CTA text available.</td></tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                        <form method="POST" action="{% url 'manage_about_us' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="form_type" value="cta">
+                            {{ cta_form.cta_text.errors }}
+                            <div class="mb-3">
+                                <label for="cta_text" class="form-label">CTA Text</label>
+                                {{ cta_form.cta_text }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Smooth scrolling for tab links
+            document.querySelectorAll('.nav-tabs .nav-link').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    window.scrollTo({
+                        top: targetSection.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+
+                    // Update active tab
+                    document.querySelectorAll('.nav-tabs .nav-link').forEach(link => {
+                        link.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                });
+            });
+
+            // Highlight active sidebar link
+            const currentUrl = window.location.pathname;
+            document.querySelectorAll('.sidebar a').forEach(link => {
+                if (link.getAttribute('href') === currentUrl) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

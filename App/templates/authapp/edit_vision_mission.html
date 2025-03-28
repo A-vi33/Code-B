@@ -1,0 +1,170 @@
+{% extends 'authapp/base.html' %}
+
+{% block title %}Edit Vision & Mission{% endblock %}
+
+{% block content %}
+<style>
+    /* Base Styles */
+    body {
+        background-color: #f9fafb; /* Light, neutral background */
+        font-family: 'Poppins', sans-serif;
+        color: #2d3748; /* Soft dark text for readability */
+    }
+
+    .container {
+        max-width: 700px; /* Constrain width for focus */
+        margin: 0 auto;
+        padding: 40px 20px; /* Generous padding */
+    }
+
+    h2 {
+        font-weight: 700;
+        color: #4c78ff; /* Vibrant blue for emphasis */
+        margin-bottom: 30px;
+        text-align: center;
+        letter-spacing: 0.5px;
+    }
+
+    /* Messages Styling */
+    .messages {
+        margin-bottom: 25px;
+    }
+
+    .alert {
+        border-radius: 10px;
+        padding: 15px 20px;
+        font-weight: 500;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .alert-success {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .alert-danger {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    /* Form Styling */
+    form {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Subtle shadow for depth */
+        transition: transform 0.3s ease;
+    }
+
+    form:hover {
+        transform: translateY(-5px); /* Slight lift on hover */
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-weight: 600;
+        color: #4a5568; /* Slightly lighter for contrast */
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #4c78ff;
+        box-shadow: 0 0 8px rgba(76, 120, 255, 0.25);
+        outline: none;
+    }
+
+    textarea.form-control {
+        min-height: 120px; /* Better size for textareas */
+        resize: vertical; /* Allow vertical resize only */
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-right: 10px;
+    }
+
+    .btn-primary {
+        background: #4c78ff;
+        border: none;
+        color: #ffffff;
+    }
+
+    .btn-primary:hover {
+        background: #3b5ce0;
+        transform: translateY(-2px); /* Lift effect */
+    }
+
+    .btn-secondary {
+        background: #e2e8f0;
+        border: none;
+        color: #4a5568;
+    }
+
+    .btn-secondary:hover {
+        background: #cbd5e1;
+        transform: translateY(-2px);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 576px) {
+        .container {
+            padding: 20px 15px;
+        }
+
+        form {
+            padding: 20px;
+        }
+
+        .btn {
+            width: 100%;
+            margin-bottom: 10px;
+            margin-right: 0;
+        }
+    }
+</style>
+
+<div class="container mt-5">
+    <h2>Edit Vision & Mission</h2>
+
+    <!-- Display messages -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Edit Vision & Mission Form -->
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="form-buttons">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a href="{% url 'backend_page' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

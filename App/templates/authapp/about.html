@@ -1,0 +1,664 @@
+{% extends 'authapp/base.html' %}
+{% load static %}
+
+{% block title %}About Us - Positivity A-Z{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: url('{% static "images/about-bg.jpg" %}') no-repeat center/cover fixed;
+            min-height: 100vh;
+            overflow-x: hidden;
+            margin: 0;
+            color: #2d3748;
+        }
+        .about-container {
+            position: relative;
+            z-index: 1;
+        }
+        .about-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3));
+            z-index: 0;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(44, 62, 80, 0.95);
+            backdrop-filter: blur(12px);
+            padding: 1.5rem 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        .navbar-brand img {
+            transition: transform 0.3s ease;
+        }
+        .navbar-brand img:hover {
+            transform: scale(1.15);
+        }
+        .nav-link {
+            color: #ffffff !important;
+            font-weight: 500;
+            padding: 10px 15px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #ff6b6b !important;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #ff6b6b;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 50%;
+        }
+
+        /* Intro Section */
+        .intro-section {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: #ffffff;
+            padding: 100px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .intro-section h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            animation: fadeInDown 1s ease;
+        }
+        .intro-section p {
+            font-size: 1.3rem;
+            max-width: 800px;
+            margin: 0 auto;
+            animation: fadeInUp 1s ease 0.3s forwards;
+            opacity: 0;
+        }
+
+        /* General Section */
+        .section {
+            padding: 100px 0;
+            background: rgba(255, 255, 255, 0.95);
+            position: relative;
+            z-index: 1;
+        }
+        .section h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInDown 1s ease;
+        }
+        .section hr {
+            width: 120px;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            margin: 0 auto 2.5rem;
+            border: none;
+            border-radius: 2px;
+        }
+
+        /* Mission and Vision */
+        .mission-vision-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 50px;
+        }
+        .mission-vision-content div {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .mission-vision-content div:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 18px 35px rgba(0, 0, 0, 0.2);
+        }
+        .mission-vision-content h3 {
+            color: #ff6b6b;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .mission-vision-content p {
+            font-size: 1.1rem;
+            color: #4a5568;
+        }
+
+        /* Core Values */
+        .core-values-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 40px;
+            text-align: center;
+        }
+        .core-values-list div {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1.5rem;
+            border-radius: 20px;
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .core-values-list div:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 18px 35px rgba(0, 0, 0, 0.2);
+        }
+        .core-values-list h4 {
+            color: #ff6b6b;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Programs and Impact */
+        .programs-list, .impact-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .programs-list li, .impact-list li {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            position: relative;
+            padding-left: 30px;
+            color: #4a5568;
+        }
+        .programs-list li::before, .impact-list li::before {
+            content: '\f058';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: #4ecdc4;
+            position: absolute;
+            left: 0;
+            top: 2px;
+        }
+
+        /* Team Section */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        .team-member {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .team-member:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 18px 35px rgba(0, 0, 0, 0.2);
+        }
+        .team-member img {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 4px solid #ff6b6b;
+            transition: transform 0.3s ease;
+        }
+        .team-member:hover img {
+            transform: scale(1.1);
+        }
+        .team-member h4 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        .team-member p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        /* Impact Section */
+        .impact-section {
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: #ffffff;
+            padding: 80px 0;
+            text-align: center;
+        }
+        .cta-section p {
+            font-size: 1.4rem;
+            margin-bottom: 30px;
+        }
+        .cta-section .btn {
+            font-size: 1.2rem;
+            padding: 12px 30px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            color: #ffffff;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #e55a5a, #3db8b0);
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: #ffffff;
+            border: 2px solid #ffffff;
+        }
+        .btn-secondary:hover {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-color: transparent;
+            transform: scale(1.1);
+        }
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease;
+        }
+        .btn:hover::after {
+            width: 200%;
+            height: 200%;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(44, 62, 80, 0.95);
+            backdrop-filter: blur(12px);
+            color: #ffffff;
+            padding: 80px 0;
+            position: relative;
+            z-index: 1;
+        }
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 40px;
+        }
+        footer h3 {
+            color: #ff6b6b;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        footer p, footer a {
+            font-size: 1.1rem;
+            color: #d1d5db;
+        }
+        footer a {
+            transition: color 0.3s ease;
+        }
+        footer a:hover {
+            color: #ff6b6b;
+        }
+        .social-connect ul {
+            display: flex;
+            gap: 25px;
+            padding: 0;
+        }
+        .social-connect i {
+            font-size: 1.8rem;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        .social-connect i:hover {
+            transform: scale(1.3);
+            color: #ff6b6b;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            0% { opacity: 0; transform: translateY(-30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeInUp 1s ease-out;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .intro-section h1 { font-size: 2.2rem; }
+            .intro-section p { font-size: 1rem; }
+            .section h2 { font-size: 2.2rem; }
+            .mission-vision-content h3 { font-size: 1.6rem; }
+            .team-member h4 { font-size: 1.3rem; }
+            .cta-section p { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="about-container">
+        <!-- Navbar -->
+        <header>
+            <nav class="navbar navbar-expand-lg sticky-top">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="{% url 'home' %}">
+                        <img src="{% static 'images/ngo.jpg' %}" alt="NGO Logo" width="100" height="100">
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+                            <li class="nav-item"><a class="nav-link active" href="{% url 'about' %}">About Us</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#work">Our Work</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#media">Media</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#join">Join Us</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#campaign">Campaign</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#donate">Donate</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#blog">Blog</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#contact">Contact Us</a></li>
+                            {% if request.session.user_id %}
+                                <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}" onclick="return confirm('Are you sure you want to logout?');">Logout</a></li>
+                            {% else %}
+                                <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Welcome Section -->
+        <section class="intro-section fade-in">
+            <div class="container">
+                {% if about_us %}
+                    <h1>{{ about_us.introduction_title }}</h1>
+                    <p>{{ about_us.introduction_description }}</p>
+                {% else %}
+                    <h1>Welcome to Positivity A-Z</h1>
+                    <p>We are a passionate team dedicated to making a difference in the lives of underprivileged communities through education, healthcare, and empowerment.</p>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- Mission and Vision Section -->
+        <section class="section fade-in">
+            <div class="container">
+                <h2>Our Mission and Vision</h2>
+                <hr>
+                <div class="mission-vision-content">
+                    <div>
+                        {% if about_us %}
+                            <h3>{{ about_us.mission_title }}</h3>
+                            <p>{{ about_us.mission_description }}</p>
+                        {% else %}
+                            <h3>Mission</h3>
+                            <p>To provide quality education to every child, regardless of their socio-economic background.</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        {% if about_us %}
+                            <h3>{{ about_us.vision_title }}</h3>
+                            <p>{{ about_us.vision_description }}</p>
+                        {% else %}
+                            <h3>Vision</h3>
+                            <p>A world where every individual has the opportunity to live with dignity and purpose.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Our Story Section -->
+        <section class="section fade-in">
+            <div class="container">
+                {% if about_us %}
+                    <h2>{{ about_us.history_title }}</h2>
+                    <hr>
+                    <p>{{ about_us.history_description }}</p>
+                    <h3>Key Milestones</h3>
+                    <ul class="impact-list">
+                        {% for milestone in about_us.get_milestones_list %}
+                            <li>{{ milestone }}</li>
+                        {% empty %}
+                            <li>No milestones available.</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <h2>Our Story</h2>
+                    <hr>
+                    <p>Founded in 2015, Positivity A-Z started as a small community initiative. Today, we have empowered over 10,000 individuals across 50+ villages.</p>
+                    <h3>Key Milestones</h3>
+                    <ul class="impact-list">
+                        <li>2018: Launched our first school.</li>
+                        <li>2020: Organized 100+ health camps in rural areas.</li>
+                        <li>2022: Reached the milestone of 10,000 beneficiaries.</li>
+                    </ul>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- Core Values Section -->
+        <section class="section fade-in">
+            <div class="container">
+                {% if about_us %}
+                    <h2>{{ about_us.core_values_title }}</h2>
+                    <hr>
+                    <div class="core-values-list">
+                        {% for value in about_us.get_core_values_list %}
+                            <div><h4>{{ value }}</h4></div>
+                        {% empty %}
+                            <div><h4>No core values available.</h4></div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <h2>Our Core Values</h2>
+                    <hr>
+                    <div class="core-values-list">
+                        <div><h4>Integrity</h4></div>
+                        <div><h4>Empathy</h4></div>
+                        <div><h4>Inclusivity</h4></div>
+                        <div><h4>Transparency</h4></div>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- Programs Section -->
+        <section class="section fade-in">
+            <div class="container">
+                {% if about_us %}
+                    <h2>{{ about_us.programs_title }}</h2>
+                    <hr>
+                    <ul class="programs-list">
+                        {% for program in about_us.get_programs_list %}
+                            <li>{{ program }}</li>
+                        {% empty %}
+                            <li>No programs available.</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <h2>Our Programs</h2>
+                    <hr>
+                    <ul class="programs-list">
+                        <li>Providing free educational resources for children.</li>
+                        <li>Running health camps for rural areas.</li>
+                        <li>Offering vocational training for women.</li>
+                    </ul>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section class="section fade-in">
+            <div class="container">
+                {% if about_us %}
+                    <h2>{{ about_us.team_title }}</h2>
+                    <hr>
+                    <div class="team-grid">
+                        {% for member in about_us.team_members.all %}
+                            <div class="team-member">
+                                {% if member.image %}
+                                    <img src="{{ member.image.url }}" alt="{{ member.name }}">
+                                {% else %}
+                                    <img src="https://via.placeholder.com/130" alt="{{ member.name }}">
+                                {% endif %}
+                                <h4>{{ member.name }}</h4>
+                                <p>{{ member.role }}</p>
+                            </div>
+                        {% empty %}
+                            <div class="team-member">
+                                <img src="https://via.placeholder.com/130" alt="No team members">
+                                <h4>No team members available.</h4>
+                                <p>Please add team members in the admin panel.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <h2>Meet Our Team</h2>
+                    <hr>
+                    <div class="team-grid">
+                        <div class="team-member">
+                            <img src="https://via.placeholder.com/130" alt="John Doe">
+                            <h4>John Doe, Founder</h4>
+                            <p>With a vision for a better world, John has been leading the organization since its inception.</p>
+                        </div>
+                        <div class="team-member">
+                            <img src="https://via.placeholder.com/130" alt="Jane Smith">
+                            <h4>Jane Smith, Program Manager</h4>
+                            <p>Jane oversees all our programs and ensures they are impactful and sustainable.</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- Impact Section -->
+        <section class="section impact-section fade-in">
+            <div class="container">
+                {% if about_us %}
+                    <h2>{{ about_us.impact_title }}</h2>
+                    <hr>
+                    <p>{{ about_us.impact_description|linebreaks }}</p>
+                    <ul class="impact-list">
+                        {% for impact in about_us.get_impact_list %}
+                            <li>{{ impact }}</li>
+                        {% empty %}
+                            <li>No impact details available.</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <h2>Our Impact</h2>
+                    <hr>
+                    <p>In the past year, we have achieved:</p>
+                    <ul class="impact-list">
+                        <li>Educated over 5,000 children.</li>
+                        <li>Conducted 50+ health camps.</li>
+                        <li>Empowered 200 women with vocational training.</li>
+                    </ul>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- Call to Action Section -->
+        <section class="cta-section fade-in">
+            <div class="container">
+                {% if about_us %}
+                    <p>{{ about_us.cta_text }}</p>
+                {% else %}
+                    <p>Become a part of the change. Volunteer today or donate to help transform lives.</p>
+                {% endif %}
+                <a href="#donate" class="btn btn-primary">Donate Now</a>
+                <a href="#join" class="btn btn-secondary">Volunteer Today</a>
+            </div>
+        </section>
+
+        <!-- Footer Section -->
+        <footer id="contact" class="fade-in">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="contact-us">
+                        <h3>Contact Us</h3>
+                        <p>Address of the organization</p>
+                        <p>Mobile: 9390338255</p>
+                        <p>Email: witcherarjun@gmail.com</p>
+                    </div>
+                    <div class="quick-links">
+                        <h3>Quick Links</h3>
+                        <ul class="list-unstyled">
+                            <li><a href="{% url 'home' %}">Home</a></li>
+                            <li><a href="{% url 'about' %}">About</a></li>
+                            <li><a href="#contact">Contact</a></li>
+                            <li><a href="#media">Media</a></li>
+                        </ul>
+                    </div>
+                    <div class="social-connect">
+                        <h3>Social Connect</h3>
+                        <ul class="list-unstyled">
+                            <li><a href="#" target="_blank"><i class="fab fa-facebook"></i></a></li>
+                            <li><a href="#" target="_blank"><i class="fab fa-twitter"></i></a></li>
+                            <li><a href="#" target="_blank"><i class="fab fa-instagram"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <script>
+        document.querySelectorAll('.nav-link').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                if (this.getAttribute('href').startsWith('#')) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

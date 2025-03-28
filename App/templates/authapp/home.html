@@ -1,42 +1,331 @@
 {% extends 'authapp/base.html' %}
 {% load static %}
 
-{% block title %}NGO Home{% endblock %}
+{% block title %}NGO Home - Positivity A-Z{% endblock %}
 
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        body { font-family: 'Arial', sans-serif; }
-        .navbar { background-color: #2c3e50; }
-        .navbar-brand img { transition: transform 0.3s; }
-        .navbar-brand img:hover { transform: scale(1.1); }
-        .nav-link { color: white !important; font-weight: 500; }
-        .nav-link:hover { color: #f1c40f !important; }
-        .banner img { width: 100%; height: auto; display: block; }
-        .vision-mission, .statistics, .initiatives { padding: 60px 0; background: #f8f9fa; }
-        .vision-mission-content, .stats-grid, .initiatives-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        .stat { text-align: center; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .stat h3 { color: #f1c40f; font-size: 2.5rem; }
-        .initiative { text-align: center; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .initiative img { width: 100%; height: 200px; object-fit: cover; border-radius: 5px; }
-        .btn-details { background-color: #f1c40f; border: none; color: white; }
-        .btn-details:hover { background-color: #e67e22; }
-        footer { background-color: #2c3e50; color: white; padding: 40px 0; }
-        footer a { color: #f1c40f; text-decoration: none; }
-        footer a:hover { color: #e67e22; }
-        .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-        .social-connect ul { display: flex; gap: 15px; padding: 0; }
-    </style>
-</head>
-<body>
+<style>
+    /* General Styling */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: url('{% static "images/home-bg.jpg" %}') no-repeat center/cover fixed;
+        min-height: 100vh;
+        overflow-x: hidden;
+        margin: 0;
+    }
+    .home-container {
+        position: relative;
+        z-index: 1;
+    }
+    .home-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3));
+        z-index: 0;
+    }
+
+    /* Navbar Styling */
+    .navbar {
+        background: rgba(44, 62, 80, 0.95);
+        backdrop-filter: blur(12px);
+        padding: 1.5rem 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+    .navbar-brand img {
+        transition: transform 0.3s ease;
+    }
+    .navbar-brand img:hover {
+        transform: scale(1.15);
+    }
+    .nav-link {
+        color: #ffffff !important;
+        font-weight: 500;
+        padding: 10px 15px;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    .nav-link:hover, .nav-link.active {
+        color: #ff6b6b !important;
+    }
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: 5px;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: #ff6b6b;
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+    }
+    .nav-link:hover::after, .nav-link.active::after {
+        width: 50%;
+    }
+
+    /* Carousel Banner */
+    .carousel-inner img {
+        height: 80vh;
+        object-fit: cover;
+        filter: brightness(70%);
+    }
+    .carousel-caption {
+        background: rgba(0, 0, 0, 0.7);
+        padding: 1.5rem 2rem;
+        border-radius: 15px;
+        animation: fadeInUp 1s ease;
+        transform: translateY(-20px);
+    }
+    .carousel-caption h5 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #ff6b6b;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+    .carousel-caption p {
+        font-size: 1.3rem;
+        color: #ffffff;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .carousel-control-prev, .carousel-control-next {
+        opacity: 0.8;
+        transition: opacity 0.3s ease;
+    }
+    .carousel-control-prev:hover, .carousel-control-next:hover {
+        opacity: 1;
+    }
+
+    /* Section Styling */
+    .vision-mission, .statistics, .initiatives {
+        padding: 100px 0;
+        background: rgba(255, 255, 255, 0.95);
+        position: relative;
+        z-index: 1;
+    }
+    h2 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.8rem;
+        font-weight: 700;
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: fadeInDown 1s ease;
+    }
+    hr {
+        width: 120px;
+        height: 4px;
+        background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+        margin: 0 auto 2.5rem;
+        border: none;
+        border-radius: 2px;
+    }
+
+    /* Vision & Mission */
+    .vision-mission-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 50px;
+    }
+    .mission, .vision {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 2.5rem;
+        border-radius: 20px;
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .mission:hover, .vision:hover {
+        transform: translateY(-15px);
+        box-shadow: 0 18px 35px rgba(0, 0, 0, 0.2);
+    }
+    .mission h3, .vision h3 {
+        color: #ff6b6b;
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+    .mission p, .vision p {
+        font-size: 1.1rem;
+        color: #4a5568;
+    }
+
+    /* Statistics */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 40px;
+    }
+    .stat {
+        text-align: center;
+        padding: 2.5rem;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 20px;
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .stat:hover {
+        transform: scale(1.08);
+        box-shadow: 0 18px 35px rgba(0, 0, 0, 0.2);
+    }
+    .stat h3 {
+        color: #4ecdc4;
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+    .stat p {
+        font-size: 1.2rem;
+        color: #2c3e50;
+    }
+
+    /* Initiatives */
+    .initiatives-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 40px;
+    }
+    .initiative {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .initiative:hover {
+        transform: translateY(-15px);
+        box-shadow: 0 18px 35px rgba(0, 0, 0, 0.2);
+    }
+    .initiative img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        border-radius: 15px;
+        margin-bottom: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+    .initiative:hover img {
+        transform: scale(1.05);
+    }
+    .initiative h3 {
+        color: #ff6b6b;
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+    .initiative p {
+        font-size: 1.1rem;
+        color: #4a5568;
+    }
+    .btn-details {
+        background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+        border: none;
+        color: #ffffff;
+        padding: 0.7rem 2rem;
+        border-radius: 30px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .btn-details:hover {
+        background: linear-gradient(45deg, #e55a5a, #3db8b0);
+        transform: scale(1.1);
+        box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+    }
+    .btn-details::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.4s ease, height 0.4s ease;
+    }
+    .btn-details:hover::after {
+        width: 200%;
+        height: 200%;
+    }
+
+    /* Footer */
+    footer {
+        background: rgba(44, 62, 80, 0.95);
+        backdrop-filter: blur(12px);
+        color: #ffffff;
+        padding: 80px 0;
+        position: relative;
+        z-index: 1;
+    }
+    .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 40px;
+    }
+    footer h3 {
+        color: #ff6b6b;
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+    footer p, footer a {
+        font-size: 1.1rem;
+        color: #d1d5db;
+    }
+    footer a {
+        transition: color 0.3s ease;
+    }
+    footer a:hover {
+        color: #ff6b6b;
+    }
+    .social-connect ul {
+        display: flex;
+        gap: 25px;
+        padding: 0;
+    }
+    .social-connect i {
+        font-size: 1.8rem;
+        transition: transform 0.3s ease, color 0.3s ease;
+    }
+    .social-connect i:hover {
+        transform: scale(1.3);
+        color: #ff6b6b;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        0% { opacity: 0; transform: translateY(30px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInDown {
+        0% { opacity: 0; transform: translateY(-30px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in {
+        animation: fadeInUp 1s ease-out;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .carousel-caption h5 { font-size: 1.8rem; }
+        .carousel-caption p { font-size: 1rem; }
+        h2 { font-size: 2.2rem; }
+        .mission h3, .vision h3 { font-size: 1.6rem; }
+        .stat h3 { font-size: 2.2rem; }
+        .initiative h3 { font-size: 1.5rem; }
+    }
+</style>
+
+<div class="home-container">
     <!-- Navbar -->
     <header>
         <nav class="navbar navbar-expand-lg sticky-top">
@@ -44,10 +333,13 @@
                 <a class="navbar-brand" href="{% url 'home' %}">
                     <img src="{% static 'images/ngo.jpg' %}" alt="NGO Logo" width="100" height="100">
                 </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
-                        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#about">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="{% url 'home' %}">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About Us</a></li>
                         <li class="nav-item"><a class="nav-link" href="#work">Our Work</a></li>
                         <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
                         <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
@@ -68,73 +360,117 @@
         </nav>
     </header>
 
-    <!-- Banner Section -->
-    <section id="home" class="banner">
-        <img src="https://media.istockphoto.com/id/816887330/photo/cms.webp?a=1&b=1&s=612x612&w=0&k=20&c=jv9IENx6KKpChoTdKM9PJKfpb7xo-s-E6oMPOdxad28=" alt="Banner Image">
+    <!-- Carousel Banner -->
+    <section id="home" class="fade-in">
+        <div id="bannerCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                {% for banner in banners %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <img src="{{ banner.image_url }}" class="d-block w-100" alt="{{ banner.title }}">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>{{ banner.title }}</h5>
+                        <p>{{ banner.description }}</p>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="carousel-item active">
+                    <img src="https://via.placeholder.com/1200x600" class="d-block w-100" alt="Default Banner">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Welcome to Positivity A-Z</h5>
+                        <p>Join us in spreading hope and making a difference.</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
     </section>
 
     <!-- Vision and Mission Section -->
-    <section id="about" class="vision-mission">
+    <section id="about" class="vision-mission fade-in">
         <div class="container">
-            <h2 class="text-left mb-4">Mission and Vision</h2>
+            <h2>Mission and Vision</h2>
             <hr>
             <div class="vision-mission-content">
                 <div class="mission">
-                    <h3>Our Mission</h3>
-                    <p>Lorem ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+                    <h3>{{ vision_mission.mission_title|default:"Our Mission" }}</h3>
+                    <p>{{ vision_mission.mission_description|default:"Empowering communities through sustainable initiatives." }}</p>
                 </div>
                 <div class="vision">
-                    <h3>Our Vision</h3>
-                    <p>Lorem ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+                    <h3>{{ vision_mission.vision_title|default:"Our Vision" }}</h3>
+                    <p>{{ vision_mission.vision_description|default:"A world where positivity drives change." }}</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Statistics Section -->
-    <section id="work" class="statistics">
+    <section id="work" class="statistics fade-in">
         <div class="container">
-            <h2 class="text-left mb-4">Our Stats</h2>
+            <h2>Our Impact</h2>
             <hr>
             <div class="stats-grid">
-                <div class="stat"><h3>3067</h3><p>Campaign Hosted</p></div>
-                <div class="stat"><h3>1000+</h3><p>Student Educated</p></div>
-                <div class="stat"><h3>5000+</h3><p>Patient Treated</p></div>
+                {% for stat in statistics %}
+                <div class="stat">
+                    <h3>{{ stat.value }}</h3>
+                    <p>{{ stat.label }}</p>
+                </div>
+                {% empty %}
+                <div class="stat"><h3>3067</h3><p>Campaigns Hosted</p></div>
+                <div class="stat"><h3>1000+</h3><p>Students Educated</p></div>
+                <div class="stat"><h3>5000+</h3><p>Patients Treated</p></div>
                 <div class="stat"><h3>2000+</h3><p>Care Across India</p></div>
+                {% endfor %}
             </div>
         </div>
     </section>
 
     <!-- Initiatives Section -->
-    <section id="campaign" class="initiatives">
+    <section id="campaign" class="initiatives fade-in">
         <div class="container">
-            <h2 class="text-left mb-4">Our Campaign Initiative</h2>
+            <h2>Our Campaigns</h2>
             <hr>
             <div class="initiatives-grid">
+                {% for initiative in initiatives %}
                 <div class="initiative">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbu5nWXDZ7gkztBoK71Ee9tmHAbAkFTP4nAg&s" alt="Initiative 1">
+                    <img src="{{ initiative.image_url }}" alt="{{ initiative.title }}">
+                    <h3>{{ initiative.title }}</h3>
+                    <p>{{ initiative.description }}</p>
+                    <a href="#" class="btn btn-details">See Details</a>
+                </div>
+                {% empty %}
+                <div class="initiative">
+                    <img src="https://via.placeholder.com/320x220" alt="Initiative 1">
                     <h3>Empowering Girls Education</h3>
-                    <p>Small description about the initiative</p>
-                    <a href="#" class="btn btn-details btn-sm">See Details</a>
+                    <p>Supporting education for a brighter future.</p>
+                    <a href="#" class="btn btn-details">See Details</a>
                 </div>
                 <div class="initiative">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0Th30qHiPjAa0yLF5jW6XE2fYQC3HryJOpQ&s" alt="Initiative 2">
-                    <h3>Committed to Child Nutrient</h3>
-                    <p>Small description about the initiative</p>
-                    <a href="#" class="btn btn-details btn-sm">See Details</a>
+                    <img src="https://via.placeholder.com/320x220" alt="Initiative 2">
+                    <h3>Child Nutrition Program</h3>
+                    <p>Ensuring every child thrives.</p>
+                    <a href="#" class="btn btn-details">See Details</a>
                 </div>
                 <div class="initiative">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSb6oC2AyA2MPqe2tQ_hhwpuUxAuazxhZjnhXZh0lH0waoC6J5Wj9MsxiVk3vIDJsNFnxE&usqp=CAU" alt="Initiative 3">
+                    <img src="https://via.placeholder.com/320x220" alt="Initiative 3">
                     <h3>Manav Kartavya</h3>
-                    <p>Small description about the initiative/p>
-                    <a href="#" class="btn btn-details btn-sm">See Details</a>
+                    <p>Community-driven change.</p>
+                    <a href="#" class="btn btn-details">See Details</a>
                 </div>
+                {% endfor %}
             </div>
         </div>
     </section>
 
     <!-- Footer Section -->
-    <footer id="contact">
+    <footer id="contact" class="fade-in">
         <div class="container">
             <div class="footer-content">
                 <div class="contact-us">
@@ -163,26 +499,30 @@
             </div>
         </div>
     </footer>
+</div>
 
-    <!-- Bootstrap JS and Popper.js -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
-    <!-- Smooth Scrolling -->
-    <script>
-        document.querySelectorAll('.nav-link').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                if (this.getAttribute('href').startsWith('#')) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    target.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
+<!-- Bootstrap JS and Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+
+<!-- Smooth Scrolling and Redirect -->
+<script>
+    document.querySelectorAll('.nav-link').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            if (this.getAttribute('href').startsWith('#')) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
         });
-      setTimeout(() => {
+    });
+    {% if not request.session.user_id %}
+    setTimeout(() => {
         window.location.href = "{% url 'login' %}";
-    }, 3000); // Redirects after 3 seconds
-  <p class="text-center">Redirecting to login in 3 seconds...</p>
-    </script>
-</body>
-</html>
+    }, 3000);
+    {% endif %}
+</script>
+{% if not request.session.user_id %}
+<p class="text-center text-white position-fixed bottom-0 w-100 mb-3 fade-in" style="background: rgba(0, 0, 0, 0.7); padding: 10px;">Redirecting to login in 3 seconds...</p>
+{% endif %}
 {% endblock %}

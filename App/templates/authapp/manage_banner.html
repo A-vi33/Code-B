@@ -1,0 +1,405 @@
+{% extends 'authapp/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Manage Banners - Positivity A_Z{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts for Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #007bff 0%, #00c4b4 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .manage-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .manage-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .manage-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .manage-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(0, 123, 255, 0.1), rgba(0, 196, 180, 0.1));
+            z-index: 0;
+            border-radius: 20px;
+        }
+
+        .manage-card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-heading {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #007bff, #00c4b4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            animation: fadeInDown 1s ease;
+        }
+
+        .manage-card h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: fadeInDown 1s ease 0.3s;
+        }
+
+        /* Form Styling */
+        .banner-form .form-label {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .banner-form .form-control {
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .banner-form .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.2);
+            background: #fff;
+        }
+
+        .banner-form .invalid-feedback {
+            font-size: 0.875rem;
+            color: #dc3545;
+            margin-top: 5px;
+        }
+
+        /* Table Styling */
+        .banner-table {
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .banner-table th, .banner-table td {
+            padding: 15px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        .banner-table th {
+            background: linear-gradient(45deg, #007bff, #00c4b4);
+            color: white;
+            font-weight: 600;
+        }
+
+        .banner-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .banner-table tr:hover {
+            background: #e9ecef;
+        }
+
+        /* Buttons */
+        .btn-add {
+            background: linear-gradient(45deg, #007bff, #00c4b4);
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-add:hover {
+            background: linear-gradient(45deg, #0056b3, #009b8d);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+        }
+
+        .btn-edit {
+            background: linear-gradient(45deg, #28a745, #34c759);
+            border: none;
+            border-radius: 50px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit:hover {
+            background: linear-gradient(45deg, #218838, #2ba84a);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-delete {
+            background: linear-gradient(45deg, #dc3545, #ff6f61);
+            border: none;
+            border-radius: 50px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-delete:hover {
+            background: linear-gradient(45deg, #c82333, #e04e3f);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 1s ease;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .manage-card {
+                padding: 20px;
+            }
+
+            .brand-heading {
+                font-size: 2.2rem;
+            }
+
+            .manage-card h2 {
+                font-size: 1.5rem;
+            }
+
+            .banner-table th, .banner-table td {
+                font-size: 0.9rem;
+                padding: 10px;
+            }
+
+            .btn-add, .btn-edit, .btn-delete {
+                font-size: 0.9rem;
+                padding: 8px 15px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .banner-table {
+                font-size: 0.85rem;
+            }
+
+            .banner-table th, .banner-table td {
+                display: block;
+                text-align: center;
+            }
+
+            .banner-table tr {
+                margin-bottom: 10px;
+                border-bottom: 1px solid #dee2e6;
+            }
+
+            .banner-table thead {
+                display: none;
+            }
+
+            .banner-table td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                display: block;
+                margin-bottom: 5px;
+                color: #2c3e50;
+            }
+
+            .banner-table .action-buttons {
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="manage-container">
+        <div class="manage-card">
+            <h2 class="brand-heading">Positivity A_Z</h2>
+            <h2>Manage Banners</h2>
+
+            <!-- Display Messages -->
+            {% if messages %}
+                <div class="mb-4">
+                    {% for message in messages %}
+                        <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Add Banner Form -->
+            <div class="mb-5">
+                <h3 class="text-center mb-4" style="color: #2c3e50;">Add New Banner</h3>
+                <form method="POST" class="banner-form needs-validation" novalidate>
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {{ field|add_class:"form-control" }}
+                            {% if field.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ field.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-add">Add Banner</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Banner List -->
+            <div class="fade-in-up">
+                <h3 class="text-center mb-4" style="color: #2c3e50;">Banner List</h3>
+                {% if banners %}
+                    <div class="table-responsive">
+                        <table class="table banner-table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Inside manage_banner.html -->
+                                {% for banner in banners %}
+                                    <tr>
+                                        <td data-label="Title">{{ banner.title }}</td>
+                                        <td data-label="Description">{{ banner.description }}</td>
+                                        <td data-label="Actions" class="action-buttons">
+                                            <a href="{% url 'edit_banner' banner.id %}" class="btn btn-edit">Edit</a>
+                                            <button type="button" class="btn btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal{{ banner.id }}">Delete</button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Delete Confirmation Modal -->
+                                    <div class="modal fade" id="deleteModal{{ banner.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ banner.id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="deleteModalLabel{{ banner.id }}">Confirm Deletion</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete the banner "{{ banner.title }}"?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <form method="POST" action="{% url 'delete_banner' banner.id %}">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-center text-muted">No banners available. Add a new banner above.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <!-- Form Validation Script -->
+    <script>
+        (function () {
+            'use strict';
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
+</body>
+</html>
+{% endblock %}

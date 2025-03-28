@@ -1,0 +1,263 @@
+{% extends 'authapp/base.html' %}
+{% load static %}
+
+{% block title %}Edit About Us - Positivity A-Z{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: url('{% static "images/admin-bg.jpg" %}') no-repeat center/cover fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            margin: 0;
+            color: #2d3748;
+        }
+        .edit-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 700px;
+            padding: 20px;
+        }
+        .edit-container::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3));
+            z-index: -1;
+        }
+
+        /* Header Styling */
+        .header {
+            background: linear-gradient(45deg, #4c78ff, #1e3a8a);
+            color: #ffffff;
+            padding: 30px;
+            text-align: center;
+            border-radius: 15px 15px 0 0;
+            box-shadow: 0 4px 15px rgba(76, 120, 255, 0.3);
+            animation: fadeInDown 0.8s ease-out;
+        }
+        .header h1 {
+            font-weight: 700;
+            font-size: 2.2rem;
+            margin: 0;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Card Styling */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+            padding: 2.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 18px 35px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Form Styling */
+        .form-label {
+            font-size: 1.1rem;
+            color: #2c3e50;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        .form-control {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .form-control:focus {
+            border-color: #4c78ff;
+            box-shadow: 0 0 8px rgba(76, 120, 255, 0.4);
+            outline: none;
+        }
+        .form-text {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        /* Button Styling */
+        .btn-primary {
+            background: linear-gradient(45deg, #4c78ff, #3b5ce0);
+            border: none;
+            color: #ffffff;
+            font-weight: 600;
+            padding: 12px;
+            border-radius: 25px;
+            width: 100%;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #3b5ce0, #2a4cb8);
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(76, 120, 255, 0.4);
+        }
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease;
+        }
+        .btn-primary:hover::after {
+            width: 200%;
+            height: 200%;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            0% { opacity: 0; transform: translateY(-30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 576px) {
+            .edit-container {
+                padding: 15px;
+            }
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            .card {
+                padding: 1.5rem;
+            }
+            .form-label {
+                font-size: 1rem;
+            }
+            .form-control {
+                font-size: 0.9rem;
+            }
+            .btn-primary {
+                padding: 10px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="edit-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Edit About Us Content</h1>
+        </div>
+
+        <!-- Form Card -->
+        <div class="card">
+            <form method="POST" action="{% url 'edit_about_us' about_us.id %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="id_introduction_title" class="form-label">Introduction Title</label>
+                    {{ about_us_form.introduction_title }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_introduction_description" class="form-label">Introduction Description</label>
+                    {{ about_us_form.introduction_description }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_mission_title" class="form-label">Mission Title</label>
+                    {{ about_us_form.mission_title }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_mission_description" class="form-label">Mission Description</label>
+                    {{ about_us_form.mission_description }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_vision_title" class="form-label">Vision Title</label>
+                    {{ about_us_form.vision_title }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_vision_description" class="form-label">Vision Description</label>
+                    {{ about_us_form.vision_description }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_history_title" class="form-label">History Title</label>
+                    {{ about_us_form.history_title }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_history_description" class="form-label">History Description</label>
+                    {{ about_us_form.history_description }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_milestones" class="form-label">Milestones (one per line)</label>
+                    {{ about_us_form.milestones }}
+                    <small class="form-text">Enter each milestone on a new line.</small>
+                </div>
+                <div class="mb-3">
+                    <label for="id_core_values_title" class="form-label">Core Values Title</label>
+                    {{ about_us_form.core_values_title }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_core_values" class="form-label">Core Values (one per line)</label>
+                    {{ about_us_form.core_values }}
+                    <small class="form-text">Enter each value on a new line.</small>
+                </div>
+                <div class="mb-3">
+                    <label for="id_programs_title" class="form-label">Programs Title</label>
+                    {{ about_us_form.programs_title }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_programs" class="form-label">Programs (one per line)</label>
+                    {{ about_us_form.programs }}
+                    <small class="form-text">Enter each program on a new line.</small>
+                </div>
+                <div class="mb-3">
+                    <label for="id_team_title" class="form-label">Team Title</label>
+                    {{ about_us_form.team_title }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_impact_title" class="form-label">Impact Title</label>
+                    {{ about_us_form.impact_title }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_impact_description" class="form-label">Impact Description (include achievements, one per line)</label>
+                    {{ about_us_form.impact_description }}
+                    <small class="form-text">Enter each achievement on a new line.</small>
+                </div>
+                <div class="mb-3">
+                    <label for="id_cta_text" class="form-label">Call to Action Text</label>
+                    {{ about_us_form.cta_text }}
+                </div>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
+{% endblock %}

@@ -39,13 +39,12 @@ class User(models.Model):
         return timezone.now() <= self.token_expiry
 
     def __str__(self):
-        return self.email
+        return self.full_name
 
 class Banner(models.Model):
-    id = models.AutoField(primary_key=True)
-    image_url = models.CharField(max_length=255)  # Can be changed to ImageField for uploads
-    title = models.CharField(max_length=150)
+    title = models.CharField(max_length=200)
     description = models.TextField()
+    image_url = models.URLField(max_length=500, blank=True, null=True)
     order = models.IntegerField(default=0)
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -55,48 +54,79 @@ class Banner(models.Model):
         return self.title
 
 class VisionMission(models.Model):
-    id = models.AutoField(primary_key=True)
-    vision_title = models.CharField(max_length=150)
-    vision_description = models.CharField(max_length=200)
-    mission_title = models.CharField(max_length=150)
-    mission_description = models.CharField(max_length=200)
+    vision_title = models.CharField(max_length=200)
+    vision_description = models.TextField()
+    mission_title = models.CharField(max_length=200)
+    mission_description = models.TextField()
     last_updated = models.DateTimeField(auto_now=True)
-    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.vision_title} & {self.mission_title}"
+        return self.vision_title
 
 class Statistic(models.Model):
-    STATUS_CHOICES = (
-        ('active', 'Active'),
-        ('inactive', 'Inactive'),
-    )
-
-    id = models.AutoField(primary_key=True)
     label = models.CharField(max_length=100)
-    value = models.CharField(max_length=50)
+    value = models.CharField(max_length=100)
     order = models.IntegerField(default=0)
-    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='active')
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    status = models.CharField(max_length=20, choices=[('active', 'Active'), ('inactive', 'Inactive')], default='active')
 
     def __str__(self):
         return self.label
 
 class Initiative(models.Model):
-    STATUS_CHOICES = (
-        ('active', 'Active'),
-        ('inactive', 'Inactive'),
-    )
-
-    id = models.AutoField(primary_key=True)
-    title = models.CharField(max_length=100)
-    description = models.CharField(max_length=200)
-    image_url = models.CharField(max_length=150)  # Can be changed to ImageField for uploads
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    image_url = models.URLField(max_length=500, blank=True, null=True)
     order = models.IntegerField(default=0)
-    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='active')
+    status = models.CharField(max_length=20, choices=[('active', 'Active'), ('inactive', 'Inactive')], default='active')
+
+    def __str__(self):
+        return self.title
+
+class AboutUs(models.Model):
+    introduction_title = models.CharField(max_length=200, blank=True)
+    introduction_description = models.TextField(blank=True)
+    mission_title = models.CharField(max_length=200, blank=True)
+    mission_description = models.TextField(blank=True)
+    vision_title = models.CharField(max_length=200, blank=True)
+    vision_description = models.TextField(blank=True)
+    history_title = models.CharField(max_length=200, blank=True)
+    history_description = models.TextField(blank=True)
+    milestones = models.TextField(blank=True)  # Store milestones as a newline-separated string
+    core_values_title = models.CharField(max_length=200, blank=True)
+    core_values = models.TextField(blank=True)  # Store core values as a newline-separated string
+    programs_title = models.CharField(max_length=200, blank=True)
+    programs = models.TextField(blank=True)  # Store programs as a newline-separated string
+    team_title = models.CharField(max_length=200, blank=True)
+    impact_title = models.CharField(max_length=200, blank=True)
+    impact_description = models.TextField(blank=True)  # Store impact description and list
+    cta_text = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def get_milestones_list(self):
+        return self.milestones.splitlines() if self.milestones else []
+
+    def get_core_values_list(self):
+        return self.core_values.splitlines() if self.core_values else []
+
+    def get_programs_list(self):
+        return self.programs.splitlines() if self.programs else []
+
+    def get_impact_list(self):
+        # Extract the list items from impact_description (assuming the list starts after the first line)
+        lines = self.impact_description.splitlines() if self.impact_description else []
+        return lines[1:] if len(lines) > 1 else []
+
+    def __str__(self):
+        return f"About Us - {self.introduction_title}"
+
+class TeamMember(models.Model):
+    about_us = models.ForeignKey(AboutUs, on_delete=models.CASCADE, related_name='team_members')
+    name = models.CharField(max_length=100)
+    role = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='team_images/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.title
+        return self.name

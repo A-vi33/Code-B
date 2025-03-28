@@ -1,5 +1,52 @@
 from django import forms
-from .models import User
+from .models import User, AboutUs, TeamMember
+from .models import Banner, Statistic, Initiative, VisionMission
+
+class BannerForm(forms.ModelForm):
+    class Meta:
+        model = Banner
+        fields = ['title', 'description', 'image_url', 'order', 'status']
+        widgets = {
+            'title': forms.TextInput(attrs={'required': 'required'}),
+            'description': forms.Textarea(attrs={'required': 'required', 'rows': 4}),
+            'image_url': forms.URLInput(attrs={'required': 'required'}),
+            'order': forms.NumberInput(attrs={'value': '0'}),
+            'status': forms.CheckboxInput(),
+        }
+
+class VisionMissionForm(forms.ModelForm):
+    class Meta:
+        model = VisionMission
+        fields = ['vision_title', 'vision_description', 'mission_title', 'mission_description']
+        widgets = {
+            'vision_title': forms.TextInput(attrs={'required': 'required'}),
+            'vision_description': forms.Textarea(attrs={'required': 'required', 'rows': 3}),
+            'mission_title': forms.TextInput(attrs={'required': 'required'}),
+            'mission_description': forms.Textarea(attrs={'required': 'required', 'rows': 3}),
+        }
+
+class StatisticForm(forms.ModelForm):
+    class Meta:
+        model = Statistic
+        fields = ['label', 'value', 'order', 'status']
+        widgets = {
+            'label': forms.TextInput(attrs={'required': 'required'}),
+            'value': forms.TextInput(attrs={'required': 'required'}),
+            'order': forms.NumberInput(attrs={'value': '0'}),
+            'status': forms.Select(choices=[('active', 'Active'), ('inactive', 'Inactive')]),
+        }
+
+class InitiativeForm(forms.ModelForm):
+    class Meta:
+        model = Initiative
+        fields = ['title', 'description', 'image_url', 'order', 'status']
+        widgets = {
+            'title': forms.TextInput(attrs={'required': 'required'}),
+            'description': forms.Textarea(attrs={'required': 'required', 'rows': 3}),
+            'image_url': forms.URLInput(attrs={'required': 'required'}),
+            'order': forms.NumberInput(attrs={'value': '0'}),
+            'status': forms.Select(choices=[('active', 'Active'), ('inactive', 'Inactive')]),
+        }
 
 class RegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
@@ -47,3 +94,121 @@ class ResetPasswordForm(forms.Form):
         if new_password != confirm_password:
             raise forms.ValidationError("Passwords do not match")
         return cleaned_data
+
+class AboutUsForm(forms.ModelForm):
+    class Meta:
+        model = AboutUs
+        fields = [
+            'introduction_title', 'introduction_description',
+            'mission_title', 'mission_description',
+            'vision_title', 'vision_description',
+            'history_title', 'history_description', 'milestones',
+            'core_values_title', 'core_values',
+            'programs_title', 'programs',
+            'team_title',
+            'impact_title', 'impact_description',
+            'cta_text'
+        ]
+        widgets = {
+            'introduction_description': forms.Textarea(attrs={'rows': 3}),
+            'mission_description': forms.Textarea(attrs={'rows': 3}),
+            'vision_description': forms.Textarea(attrs={'rows': 3}),
+            'history_description': forms.Textarea(attrs={'rows': 3}),
+            'milestones': forms.Textarea(attrs={'rows': 4}),
+            'core_values': forms.Textarea(attrs={'rows': 4}),
+            'programs': forms.Textarea(attrs={'rows': 4}),
+            'impact_description': forms.Textarea(attrs={'rows': 4}),
+            'cta_text': forms.Textarea(attrs={'rows': 2}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Make all fields optional
+        for field in self.fields.values():
+            field.required = False
+
+
+
+class IntroductionForm(forms.ModelForm):
+    class Meta:
+        model = AboutUs
+        fields = ['introduction_title', 'introduction_description']
+        widgets = {
+            'introduction_title': forms.TextInput(attrs={'class': 'form-control'}),
+            'introduction_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+class MissionVisionForm(forms.ModelForm):
+    class Meta:
+        model = AboutUs
+        fields = ['mission_title', 'mission_description', 'vision_title', 'vision_description']
+        widgets = {
+            'mission_title': forms.TextInput(attrs={'class': 'form-control'}),
+            'mission_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'vision_title': forms.TextInput(attrs={'class': 'form-control'}),
+            'vision_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+class HistoryForm(forms.ModelForm):
+    class Meta:
+        model = AboutUs
+        fields = ['history_title', 'history_description', 'milestones']
+        widgets = {
+            'history_title': forms.TextInput(attrs={'class': 'form-control'}),
+            'history_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'milestones': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+class CoreValuesForm(forms.ModelForm):
+    class Meta:
+        model = AboutUs
+        fields = ['core_values_title', 'core_values']
+        widgets = {
+            'core_values_title': forms.TextInput(attrs={'class': 'form-control'}),
+            'core_values': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+class ProgramsForm(forms.ModelForm):
+    class Meta:
+        model = AboutUs
+        fields = ['programs_title', 'programs']
+        widgets = {
+            'programs_title': forms.TextInput(attrs={'class': 'form-control'}),
+            'programs': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+class TeamTitleForm(forms.ModelForm):
+    class Meta:
+        model = AboutUs
+        fields = ['team_title']
+        widgets = {
+            'team_title': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class ImpactForm(forms.ModelForm):
+    class Meta:
+        model = AboutUs
+        fields = ['impact_title', 'impact_description']
+        widgets = {
+            'impact_title': forms.TextInput(attrs={'class': 'form-control'}),
+            'impact_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
+        }
+
+class CTAForm(forms.ModelForm):
+    class Meta:
+        model = AboutUs
+        fields = ['cta_text']
+        widgets = {
+            'cta_text': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+        }
+
+class TeamMemberForm(forms.ModelForm):
+    class Meta:
+        model = TeamMember
+        fields = ['name', 'role', 'image']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'role': forms.TextInput(attrs={'class': 'form-control'}),
+            'image': forms.FileInput(attrs={'class': 'form-control-file'}),
+        }
+

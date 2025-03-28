@@ -1,14 +1,138 @@
 {% extends 'authapp/base.html' %}
 {% load static %}
 
-{% block title %}Logout{% endblock %}
+{% block title %}Logout - Positivity A_Z{% endblock %}
 
 {% block content %}
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-    <div class="card shadow-lg p-4" style="max-width: 400px; width: 100%;">
-        <h2 class="text-center mb-4">Logged Out</h2>
-        <p class="text-center">You have been successfully logged out.</p>
-        <a href="{% url 'login' %}" class="btn btn-primary w-100">Go to Login Page</a>
+<style>
+    /* General Styling */
+    .logout-container {
+        background: url('{% static "images/logout-bg.jpg" %}') no-repeat center/cover;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+    }
+    .logout-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5); /* Dark overlay for contrast */
+        z-index: 0;
+    }
+
+    /* Card Styling */
+    .logout-card {
+        max-width: 450px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.9); /* Glassmorphism effect */
+        backdrop-filter: blur(12px);
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        position: relative;
+        z-index: 1;
+        transition: transform 0.3s ease;
+    }
+    .logout-card:hover {
+        transform: translateY(-5px);
+    }
+
+    /* Typography */
+    .logout-heading {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .logout-message {
+        font-size: 1.1rem;
+        color: #666;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    /* Thank You Image */
+    .thank-you-img {
+        display: block;
+        width: 150px;
+        height: auto;
+        margin: 0 auto 1.5rem;
+        animation: fadeIn 1s ease-out;
+    }
+
+    /* Button Styling */
+    .btn-login {
+        background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+        border: none;
+        border-radius: 50px;
+        padding: 0.75rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: white;
+        width: 100%;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .btn-login:hover {
+        background: linear-gradient(90deg, #e55a5a, #3db8b0);
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    .btn-login::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transition: all 0.5s ease;
+    }
+    .btn-login:hover::before {
+        left: 100%;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in {
+        animation: fadeIn 1s ease-out;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 576px) {
+        .logout-card {
+            padding: 2rem;
+            max-width: 90%;
+        }
+        .logout-heading {
+            font-size: 1.75rem;
+        }
+        .thank-you-img {
+            width: 120px;
+        }
+    }
+</style>
+
+<div class="logout-container">
+    <div class="logout-card fade-in">
+        <img src="{% static 'images/thank-you.png' %}" alt="Thank You" class="thank-you-img">
+        <h2 class="logout-heading">See You Soon!</h2>
+        <p class="logout-message">Thank you for being part of Positivity A_Z. You’ve been successfully logged out.</p>
+        <a href="{% url 'login' %}" class="btn btn-login">Back to Login</a>
     </div>
 </div>
 {% endblock %}
