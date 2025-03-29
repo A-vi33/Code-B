@@ -29,4 +29,7 @@ urlpatterns = [
     path('manage_team_member/', views.manage_team_member, name='manage_team_member'),
     path('edit_team_member/<int:team_member_id>/', views.edit_team_member, name='edit_team_member'),
     path('delete_team_member/<int:team_member_id>/', views.delete_team_member, name='delete_team_member'),
+    path('manage_projects/', views.manage_projects, name='manage_projects'),
+    path('edit_project/<int:project_id>/', views.edit_project, name='edit_project'),
+    path('delete_project/<int:project_id>/', views.delete_project, name='delete_project'),
 ]

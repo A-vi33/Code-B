@@ -1,0 +1,118 @@
+{% extends 'authapp/base.html' %}
+{% load static %}
+
+{% block title %}Edit Project - Positivity A-Z{% endblock %}
+
+{% block content %}
+<style>
+    /* Reuse styles from manage_projects.html */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: #f8fafc;
+        font-family: 'Poppins', sans-serif;
+        color: #2d3748;
+        line-height: 1.6;
+    }
+
+    .header {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        padding: 20px 35px;
+        border-left: 5px solid #4c78ff;
+    }
+
+    .header h3 {
+        font-weight: 700;
+        color: #4c78ff;
+        letter-spacing: 0.5px;
+    }
+
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        margin-bottom: 35px;
+        background: #ffffff;
+        transition: all 0.3s ease;
+    }
+
+    .card-header {
+        background: linear-gradient(90deg, #f8fafc, #ffffff);
+        border-bottom: none;
+        padding: 25px;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .card-header h4 {
+        font-weight: 700;
+        color: #2d3748;
+        margin: 0;
+    }
+
+    .form-control, .form-select {
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+        padding: 12px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #4c78ff;
+        box-shadow: 0 0 8px rgba(76, 120, 255, 0.25);
+        outline: none;
+    }
+
+    .btn-primary {
+        background: #4c78ff;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background: #3b5ce0;
+        transform: translateY(-2px);
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <header class="header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h3>Positivity A-Z | Admin Dashboard</h3>
+            <div>
+                <span class="text-muted">Hi, {{ user.full_name }} | </span>
+                <a href="{% url 'logout' %}" class="text-primary fw-bold">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Edit Project Form -->
+    <div class="card">
+        <div class="card-header">
+            <h4>Edit Project</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a href="{% url 'manage_projects' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS and Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+{% endblock %}

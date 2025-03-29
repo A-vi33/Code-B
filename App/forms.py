@@ -1,6 +1,6 @@
 from django import forms
 from .models import User, AboutUs, TeamMember
-from .models import Banner, Statistic, Initiative, VisionMission
+from .models import Banner, Statistic, Initiative, VisionMission, Project
 
 class BannerForm(forms.ModelForm):
     class Meta:
@@ -212,3 +212,11 @@ class TeamMemberForm(forms.ModelForm):
             'image': forms.FileInput(attrs={'class': 'form-control-file'}),
         }
 
+class ProjectForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = ['title', 'description', 'status', 'start_date', 'end_date', 'location', 'image']
+        widgets = {
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'type': 'date'}),
+        }

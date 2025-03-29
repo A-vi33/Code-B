@@ -130,3 +130,26 @@ class TeamMember(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Project(models.Model):
+    STATUS_CHOICES = [
+        ('ongoing', 'Ongoing'),
+        ('completed', 'Completed'),
+        ('upcoming', 'Upcoming'),
+        ('active', 'Active'),
+    ]
+
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='ongoing')
+    start_date = models.DateField(default='2023-01-01')
+    end_date = models.DateField(blank=True, null=True)
+    location = models.CharField(max_length=200, blank=True, null=True)
+    image = models.ImageField(upload_to='projects/', blank=True, null=True)
+    order = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title

@@ -4,12 +4,12 @@ from django.core.mail import send_mail
 from .forms import RegistrationForm, LoginForm, ForgotPasswordForm, ResetPasswordForm
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import User, Banner, VisionMission, Statistic, Initiative
-from .forms import BannerForm, VisionMissionForm, StatisticForm, InitiativeForm, AboutUsForm
+from .forms import BannerForm, VisionMissionForm, ProjectForm, StatisticForm, InitiativeForm, AboutUsForm
 from .forms import (
     IntroductionForm, MissionVisionForm, HistoryForm, CoreValuesForm,
     ProgramsForm, TeamTitleForm, ImpactForm, CTAForm, TeamMemberForm
 )
-from .models import AboutUs, TeamMember
+from .models import AboutUs, TeamMember, Project
 from django.contrib import messages
 from functools import wraps
 
@@ -134,14 +134,18 @@ def home(request):
     if 'user_id' not in request.session:
         return redirect('login')
     banners = Banner.objects.filter(status=True).order_by('order')
-    vision_mission = VisionMission.objects.last()  # Get the latest vision & mission
+    vision_mission = VisionMission.objects.last()
     statistics = Statistic.objects.filter(status='active').order_by('order')
     initiatives = Initiative.objects.filter(status='active').order_by('order')
+    projects = Project.objects.filter(status='active').order_by('created_at')
+    print("Projects Query:", projects.query)  # Debug: Print the SQL query
+    print("Projects:", projects)  # Debug: Print the queryset
     return render(request, 'authapp/home.html', {
         'banners': banners,
         'vision_mission': vision_mission,
         'statistics': statistics,
         'initiatives': initiatives,
+        'projects': projects,
     })
 
 def logout_page(request):
@@ -618,3 +622,35 @@ def delete_team_member(request, team_member_id):
     team_member.delete()
     messages.success(request, "Team member deleted successfully!")
     return redirect('manage_about_us')
+
+def manage_projects(request):
+    projects = Project.objects.all()
+    if request.method == 'POST':
+        form = ProjectForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Project added successfully!')
+            return redirect('manage_projects')
+    else:
+        form = ProjectForm()
+    return render(request, 'authapp/manage_projects.html', {'projects': projects, 'project_form': form})
+
+def edit_project(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    if request.method == 'POST':
+        form = ProjectForm(request.POST, request.FILES, instance=project)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Project updated successfully!')
+            return redirect('manage_projects')
+    else:
+        form = ProjectForm(instance=project)
+    return render(request, 'authapp/edit_project.html', {'form': form, 'project': project})
+
+def delete_project(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    if request.method == 'POST':
+        project.delete()
+        messages.success(request, 'Project deleted successfully!')
+        return redirect('manage_projects')
+    return redirect('manage_projects')

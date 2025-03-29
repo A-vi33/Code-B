@@ -1,0 +1,307 @@
+{% extends 'authapp/base.html' %}
+{% load static %}
+
+{% block title %}Manage Projects - Positivity A-Z{% endblock %}
+
+{% block content %}
+<style>
+    /* General Reset and Base Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: #f8fafc;
+        font-family: 'Poppins', sans-serif;
+        color: #2d3748;
+        line-height: 1.6;
+    }
+
+    /* Sidebar Styling */
+    .sidebar {
+        background: linear-gradient(135deg, #4c78ff 0%, #1e3a8a 100%);
+        border-radius: 12px;
+        padding: 25px;
+        height: fit-content;
+        box-shadow: 0 6px 20px rgba(76, 120, 255, 0.15);
+        position: sticky;
+        top: 20px;
+    }
+
+    .sidebar a {
+        color: #ffffff;
+        font-weight: 500;
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        margin-bottom: 10px;
+    }
+
+    .sidebar a:hover, .sidebar a.active {
+        background-color: rgba(255, 255, 255, 0.25);
+        transform: translateX(5px);
+        text-decoration: none;
+    }
+
+    /* Header Styling */
+    .header {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        padding: 20px 35px;
+        border-left: 5px solid #4c78ff;
+    }
+
+    .header h3 {
+        font-weight: 700;
+        color: #4c78ff;
+        letter-spacing: 0.5px;
+    }
+
+    /* Card Styling */
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        margin-bottom: 35px;
+        background: #ffffff;
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-header {
+        background: linear-gradient(90deg, #f8fafc, #ffffff);
+        border-bottom: none;
+        padding: 25px;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .card-header h4 {
+        font-weight: 700;
+        color: #2d3748;
+        margin: 0;
+    }
+
+    /* Form Elements */
+    .form-control, .form-select {
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+        padding: 12px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #4c78ff;
+        box-shadow: 0 0 8px rgba(76, 120, 255, 0.25);
+        outline: none;
+    }
+
+    .btn-primary {
+        background: #4c78ff;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background: #3b5ce0;
+        transform: translateY(-2px);
+    }
+
+    .btn-warning, .btn-danger {
+        border-radius: 10px;
+        padding: 8px 18px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-warning:hover, .btn-danger:hover {
+        transform: translateY(-2px);
+    }
+
+    /* Existing Projects List */
+    .project-list {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        padding: 20px;
+        margin-bottom: 35px;
+    }
+
+    .project-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .project-item:last-child {
+        border-bottom: none;
+    }
+
+    .project-item h5 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2d3748;
+        margin: 0;
+    }
+
+    .project-item p {
+        font-size: 0.9rem;
+        color: #6b7280;
+        margin: 0;
+    }
+
+    .project-item .actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    /* Alerts */
+    .alert {
+        border-radius: 10px;
+        padding: 15px 20px;
+        font-weight: 500;
+    }
+
+    .alert-success {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .alert-danger {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <header class="header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h3>Positivity A-Z | Admin Dashboard</h3>
+            <div>
+                <span class="text-muted">Hi, {{ user.full_name }} | </span>
+                <a href="{% url 'logout' %}" class="text-primary fw-bold">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Display Messages -->
+    {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Sidebar and Content -->
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-2">
+            <div class="sidebar">
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'backend_page' %}">Manage Home Page</a></li>
+                    <li><a href="{% url 'manage_about_us' %}">Manage About Us</a></li>
+                    <li><a href="#">Manage Our Work</a></li>
+                    <li><a href="#">Manage Features</a></li>
+                    <li><a href="{% url 'manage_projects' %}" class="active">Manage Projects</a></li>
+                    <li><a href="#">Manage Media</a></li>
+                    <li><a href="#">Manage Campaign</a></li>
+                    <li><a href="#">Manage Blog</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-10">
+            <!-- Add/Edit Project Form -->
+            <div class="card">
+                <div class="card-header">
+                    <h4>Admin - Manage Projects</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ project_form.as_p }}
+                        <button type="submit" class="btn btn-primary">Save Project</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Existing Projects List -->
+            <div class="project-list">
+                <h4 class="mb-4">Existing Projects</h4>
+                {% for project in projects %}
+                <div class="project-item">
+                    <div>
+                        <h5>{{ project.title }}</h5>
+                        <p>Status: {{ project.status|capfirst }}</p>
+                    </div>
+                    <div class="actions">
+                        <a href="{% url 'edit_project' project.id %}" class="btn btn-warning btn-sm">Edit</a>
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteProjectModal{{ project.id }}">Delete</button>
+                    </div>
+                </div>
+
+                <!-- Delete Confirmation Modal -->
+                <div class="modal fade" id="deleteProjectModal{{ project.id }}" tabindex="-1" aria-labelledby="deleteProjectModalLabel{{ project.id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteProjectModalLabel{{ project.id }}">Confirm Deletion</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to delete the project "{{ project.title }}"?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <form method="POST" action="{% url 'delete_project' project.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-center">No projects available.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS and Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+
+<!-- Custom JavaScript for Sidebar Highlight -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const currentUrl = window.location.pathname;
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            if (link.getAttribute('href') === currentUrl) {
+                link.classList.add('active');
+            }
+        });
+    });
+</script>
+{% endblock %}
