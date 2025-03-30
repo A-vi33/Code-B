@@ -259,7 +259,8 @@
                     <li><a href="{% url 'manage_about_us' %}">Manage About Us</a></li>
                     <li><a href="#">Manage Our Work</a></li>
                     <li><a href="#">Manage Features</a></li>
-                    <li><a href="{% url 'manage_projects' %}">Manage Projects</a></li>                    <li><a href="#">Manage Media</a></li>
+                    <li><a href="{% url 'manage_projects' %}">Manage Projects</a></li>
+                    <li><a href="{% url 'manage_media' %}">Manage Media</a></li>
                     <li><a href="#">Manage Campaign</a></li>
                     <li><a href="#">Manage Blog</a></li>
                 </ul>
@@ -595,6 +596,7 @@
                             {% endfor %}
                         </tbody>
                     </table>
+                    {% include 'authapp/manage_media.html' %}
                 </div>
             </div>
         </div>

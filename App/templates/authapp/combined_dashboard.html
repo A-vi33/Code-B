@@ -1,0 +1,1234 @@
+{% extends 'authapp/base.html' %}
+{% load static %}
+
+{% block title %}Combined Dashboard - Positivity A-Z{% endblock %}
+
+{% block content %}
+<style>
+    /* General Reset and Base Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        line-height: 1.6;
+    }
+
+    /* Toggle Switch Styling */
+    .dashboard-toggle {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        padding: 15px 25px;
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .dashboard-toggle h3 {
+        font-weight: 700;
+        color: #4c78ff;
+        margin: 0;
+    }
+    .dashboard-toggle select {
+        padding: 8px 15px;
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+        font-size: 1rem;
+        font-weight: 500;
+        color: #2d3748;
+        background: #f8fafc;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .dashboard-toggle select:focus {
+        outline: none;
+        border-color: #4c78ff;
+        box-shadow: 0 0 8px rgba(76, 120, 255, 0.25);
+    }
+
+    /* Admin Dashboard Styles (from admin_page.html) */
+    .admin-container {
+        background-color: #f8fafc;
+        padding: 2rem;
+    }
+    .admin-container .sidebar {
+        background: linear-gradient(135deg, #4c78ff 0%, #1e3a8a 100%);
+        border-radius: 12px;
+        padding: 25px;
+        height: fit-content;
+        box-shadow: 0 6px 20px rgba(76, 120, 255, 0.15);
+        position: sticky;
+        top: 20px;
+    }
+    .admin-container .sidebar a {
+        color: #ffffff;
+        font-weight: 500;
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        margin-bottom: 10px;
+    }
+    .admin-container .sidebar a:hover, .admin-container .sidebar a.active {
+        background-color: rgba(255, 255, 255, 0.25);
+        transform: translateX(5px);
+        text-decoration: none;
+    }
+    .admin-container .header {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        padding: 20px 35px;
+        border-left: 5px solid #4c78ff;
+    }
+    .admin-container .header h3 {
+        font-weight: 700;
+        color: #4c78ff;
+        letter-spacing: 0.5px;
+    }
+    .admin-container .nav-tabs {
+        border-bottom: none;
+        display: flex;
+        gap: 15px;
+    }
+    .admin-container .nav-tabs .nav-link {
+        border: none;
+        padding: 12px 25px;
+        font-weight: 600;
+        color: #6b7280;
+        background: #ffffff;
+        border-radius: 50px;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    .admin-container .nav-tabs .nav-link:hover {
+        background: #edf2ff;
+        color: #4c78ff;
+        transform: scale(1.05);
+    }
+    .admin-container .nav-tabs .nav-link.active {
+        background: #4c78ff;
+        color: #ffffff;
+        box-shadow: 0 5px 15px rgba(76, 120, 255, 0.3);
+    }
+    .admin-container .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        margin-bottom: 35px;
+        background: #ffffff;
+        transition: all 0.3s ease;
+    }
+    .admin-container .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    }
+    .admin-container .card-header {
+        background: linear-gradient(90deg, #f8fafc, #ffffff);
+        border-bottom: none;
+        padding: 25px;
+        border-radius: 12px 12px 0 0;
+    }
+    .admin-container .card-header h4 {
+        font-weight: 700;
+        color: #2d3748;
+        margin: 0;
+    }
+    .admin-container .form-control, .admin-container .form-select {
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+        padding: 12px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+    .admin-container .form-control:focus, .admin-container .form-select:focus {
+        border-color: #4c78ff;
+        box-shadow: 0 0 8px rgba(76, 120, 255, 0.25);
+        outline: none;
+    }
+    .admin-container .btn-primary {
+        background: #4c78ff;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .admin-container .btn-primary:hover {
+        background: #3b5ce0;
+        transform: translateY(-2px);
+    }
+    .admin-container .btn-warning, .admin-container .btn-danger {
+        border-radius: 10px;
+        padding: 8px 18px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .admin-container .btn-warning:hover, .admin-container .btn-danger:hover {
+        transform: translateY(-2px);
+    }
+    .admin-container .table {
+        background: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+    }
+    .admin-container .table th {
+        background: #f1f5f9;
+        color: #2d3748;
+        font-weight: 700;
+        padding: 15px;
+    }
+    .admin-container .table td {
+        vertical-align: middle;
+        padding: 15px;
+    }
+    .admin-container .table img {
+        border-radius: 8px;
+        transition: transform 0.3s ease;
+    }
+    .admin-container .table img:hover {
+        transform: scale(1.1);
+    }
+    .admin-container .modal-content {
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+    .admin-container .modal-header {
+        background: #4c78ff;
+        color: #ffffff;
+        border-radius: 12px 12px 0 0;
+        padding: 20px;
+    }
+    .admin-container .modal-footer {
+        border-top: none;
+        padding: 15px 20px;
+    }
+    .admin-container .alert {
+        border-radius: 10px;
+        padding: 15px 20px;
+        font-weight: 500;
+    }
+    .admin-container .alert-success {
+        background: #d1fae5;
+        color: #065f46;
+    }
+    .admin-container .alert-danger {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    /* Backend Dashboard Styles (from backend_page.html) */
+    .backend-container {
+        background: url('{% static "images/backend-bg.jpg" %}') no-repeat center/cover;
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+    }
+    .backend-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 0;
+    }
+    .backend-container .backend-header {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        padding: 1.5rem 2rem;
+        margin-bottom: 2.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 1;
+    }
+    .backend-container .header-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #2c3e50;
+        background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .backend-container .user-greeting {
+        font-size: 1rem;
+        color: #666;
+    }
+    .backend-container .logout-link {
+        color: #ff6b6b;
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    .backend-container .logout-link:hover {
+        color: #e55a5a;
+    }
+    .backend-container .sidebar {
+        background: rgba(44, 62, 80, 0.9);
+        backdrop-filter: blur(10px);
+        padding: 2rem 1rem;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+    .backend-container .sidebar ul {
+        list-style: none;
+        padding: 0;
+    }
+    .backend-container .sidebar a {
+        color: #fff;
+        font-size: 1.1rem;
+        display: block;
+        padding: 0.75rem 1rem;
+        text-decoration: none;
+        transition: background 0.3s ease, color 0.3s ease;
+        border-radius: 8px;
+    }
+    .backend-container .sidebar a:hover, .backend-container .sidebar a.active {
+        background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+        color: white;
+    }
+    .backend-container .main-content {
+        padding: 2.5rem;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 1;
+    }
+    .backend-container .section-tabs {
+        margin-bottom: 2.5rem;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .backend-container .tab-btn {
+        background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+        border: none;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+    }
+    .backend-container .tab-btn:hover {
+        transform: scale(1.05);
+        background: linear-gradient(90deg, #e55a5a, #3db8b0);
+    }
+    .backend-container .section {
+        margin-bottom: 3.5rem;
+        animation: fadeIn 1s ease-out;
+    }
+    .backend-container .section h4 {
+        font-size: 1.6rem;
+        font-weight: 600;
+        color: #ff6b6b;
+        margin-bottom: 1.5rem;
+    }
+    .backend-container .form-container {
+        background: rgba(255, 255, 255, 0.8);
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    .backend-container .form-container .btn-primary {
+        background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+        border: none;
+        padding: 0.5rem 1.5rem;
+        border-radius: 25px;
+    }
+    .backend-container .form-container .btn-primary:hover {
+        background: linear-gradient(90deg, #e55a5a, #3db8b0);
+    }
+    .backend-container .table {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        width: 100%;
+    }
+    .backend-container .table th {
+        background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+        color: white;
+        padding: 1rem;
+    }
+    .backend-container .table td {
+        vertical-align: middle;
+        padding: 1rem;
+    }
+    .backend-container .btn-warning, .backend-container .btn-danger {
+        border-radius: 20px;
+        padding: 0.4rem 1.2rem;
+        font-size: 0.9rem;
+    }
+    .backend-container .btn-warning:hover {
+        background: #e67e22;
+        border-color: #e67e22;
+    }
+    .backend-container .btn-danger {
+        background: #dc3545;
+        border: none;
+    }
+    .backend-container .btn-danger:hover {
+        background: #c82333;
+    }
+    .backend-container .modal-content {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+    }
+    .backend-container .modal-header {
+        border-bottom: none;
+    }
+    .backend-container .modal-title {
+        color: #ff6b6b;
+    }
+    .backend-container .thank-you-img {
+        width: 80px;
+        height: auto;
+        display: block;
+        margin: 0 auto 1.5rem;
+        transition: transform 0.3s ease;
+    }
+    .backend-container .form-container:hover .thank-you-img {
+        transform: scale(1.1);
+    }
+    @keyframes fadeIn {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 768px) {
+        .backend-container .sidebar {
+            height: auto;
+            position: relative;
+        }
+        .backend-container .main-content {
+            padding: 1.5rem;
+        }
+        .backend-container .table {
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <!-- Dashboard Toggle -->
+    <div class="dashboard-toggle">
+        <h3>Positivity A-Z Dashboard</h3>
+        <select id="dashboardSwitch" onchange="switchDashboard()">
+            <option value="admin">Admin Dashboard</option>
+            <option value="backend">Backend Dashboard</option>
+        </select>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="admin-container">
+        <!-- Header -->
+        <header class="header mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3>Positivity A-Z | Admin Dashboard</h3>
+                <div>
+                    <span class="text-muted">Hi, {{ user.full_name }} | </span>
+                    <a href="{% url 'logout' %}" class="text-primary fw-bold">Logout</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Display Messages -->
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Sidebar and Content -->
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2">
+                <div class="sidebar">
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'combined_dashboard' %}" class="active">Manage Home Page</a></li>
+                        <li><a href="{% url 'manage_about_us' %}">Manage About Us</a></li>
+                        <li><a href="#">Manage Our Work</a></li>
+                        <li><a href="#">Manage Features</a></li>
+                        <li><a href="{% url 'manage_projects' %}">Manage Projects</a></li>
+                        <li><a href="{% url 'manage_media' %}">Manage Media</a></li>
+                        <li><a href="#">Manage Campaign</a></li>
+                        <li><a href="#">Manage Blog</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10">
+                <!-- Tabs -->
+                <ul class="nav nav-tabs mb-4">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#admin-banner-slider">Manage Image Slider</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#admin-vision-mission">Vision & Mission</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#admin-statistics">Manage Statistics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#admin-initiatives">Manage Initiatives</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'manage_media' %}">Manage Media</a>
+                    </li>
+                </ul>
+
+                <!-- Banner Slider Section -->
+                <div id="admin-banner-slider" class="card">
+                    <div class="card-header">
+                        <h4>Manage Image Slider</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="banner_form" value="1">
+                            {{ banner_form.as_p }}
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+
+                        <!-- Banner Table -->
+                        <table class="table table-bordered mt-4">
+                            <thead>
+                                <tr>
+                                    <th>Sr.No</th>
+                                    <th>Image</th>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Order</th>
+                                    <th>Status</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for banner in banners %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>
+                                        {% if banner.image_url %}
+                                            <img src="{{ banner.image_url }}" alt="{{ banner.title }}" width="100" class="rounded">
+                                        {% else %}
+                                            No Image
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ banner.title }}</td>
+                                    <td>{{ banner.description }}</td>
+                                    <td>{{ banner.order|default:"0" }}</td>
+                                    <td>
+                                        <span class="badge {% if banner.status %}bg-success{% else %}bg-danger{% endif %}">
+                                            {{ banner.status|yesno:"Active,Inactive" }}
+                                        </span>
+                                    </td>
+                                    <td><a href="{% url 'edit_banner' banner.id %}" class="btn btn-warning btn-sm">Edit</a></td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#adminDeleteModal{{ banner.id }}">Delete</button>
+                                    </td>
+                                </tr>
+
+                                <!-- Delete Confirmation Modal -->
+                                <div class="modal fade" id="adminDeleteModal{{ banner.id }}" tabindex="-1" aria-labelledby="adminDeleteModalLabel{{ banner.id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="adminDeleteModalLabel{{ banner.id }}">Confirm Deletion</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure you want to delete the banner "{{ banner.title }}"?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <form method="POST" action="{% url 'delete_banner' banner.id %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center">No banners available.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Vision & Mission Section -->
+                <div id="admin-vision-mission" class="card">
+                    <div class="card-header">
+                        <h4>Vision & Mission</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="vision_mission_form" value="1">
+                            {{ vm_form.as_p }}
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+
+                        <!-- Vision & Mission Table -->
+                        <table class="table table-bordered mt-4">
+                            <thead>
+                                <tr>
+                                    <th>Sr.No</th>
+                                    <th>Vision Title</th>
+                                    <th>Vision Description</th>
+                                    <th>Mission Title</th>
+                                    <th>Mission Description</th>
+                                    <th>Last Updated</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for vm in vision_missions %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ vm.vision_title }}</td>
+                                    <td>{{ vm.vision_description }}</td>
+                                    <td>{{ vm.mission_title }}</td>
+                                    <td>{{ vm.mission_description }}</td>
+                                    <td>{{ vm.last_updated }}</td>
+                                    <td><a href="{% url 'edit_vision_mission' vm.id %}" class="btn btn-warning btn-sm">Edit</a></td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#adminDeleteVMModal{{ vm.id }}">Delete</button>
+                                    </td>
+                                </tr>
+
+                                <!-- Delete Confirmation Modal -->
+                                <div class="modal fade" id="adminDeleteVMModal{{ vm.id }}" tabindex="-1" aria-labelledby="adminDeleteVMModalLabel{{ vm.id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="adminDeleteVMModalLabel{{ vm.id }}">Confirm Deletion</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure you want to delete the vision & mission "{{ vm.vision_title }}"?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <form method="POST" action="{% url 'delete_vision_mission' vm.id %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center">No vision & mission statements available.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Statistics Section -->
+                <div id="admin-statistics" class="card">
+                    <div class="card-header">
+                        <h4>Manage Statistics</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="statistic_form" value="1">
+                            {{ stat_form.as_p }}
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+
+                        <!-- Statistics Table -->
+                        <table class="table table-bordered mt-4">
+                            <thead>
+                                <tr>
+                                    <th>Sr.No</th>
+                                    <th>Label</th>
+                                    <th>Value</th>
+                                    <th>Order</th>
+                                    <th>Status</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for stat in statistics %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ stat.label }}</td>
+                                    <td>{{ stat.value }}</td>
+                                    <td>{{ stat.order }}</td>
+                                    <td>
+                                        <span class="badge {% if stat.status == 'active' %}bg-success{% else %}bg-danger{% endif %}">
+                                            {{ stat.status|capfirst }}
+                                        </span>
+                                    </td>
+                                    <td><a href="{% url 'edit_statistic' stat.id %}" class="btn btn-warning btn-sm">Edit</a></td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#adminDeleteStatModal{{ stat.id }}">Delete</button>
+                                    </td>
+                                </tr>
+
+                                <!-- Delete Confirmation Modal -->
+                                <div class="modal fade" id="adminDeleteStatModal{{ stat.id }}" tabindex="-1" aria-labelledby="adminDeleteStatModalLabel{{ stat.id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="adminDeleteStatModalLabel{{ stat.id }}">Confirm Deletion</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure you want to delete the statistic "{{ stat.label }}"?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <form method="POST" action="{% url 'delete_statistic' stat.id %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center">No statistics available.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Initiatives Section -->
+                <div id="admin-initiatives" class="card">
+                    <div class="card-header">
+                        <h4>Manage Initiatives</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="initiative_form" value="1">
+                            {{ init_form.as_p }}
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+
+                        <!-- Initiatives Table -->
+                        <table class="table table-bordered mt-4">
+                            <thead>
+                                <tr>
+                                    <th>Sr.No</th>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Image</th>
+                                    <th>Order</th>
+                                    <th>Status</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for initiative in initiatives %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ initiative.title }}</td>
+                                    <td>{{ initiative.description }}</td>
+                                    <td>
+                                        {% if initiative.image_url %}
+                                            <img src="{{ initiative.image_url }}" alt="{{ initiative.title }}" width="100" class="rounded">
+                                        {% else %}
+                                            No Image
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ initiative.order }}</td>
+                                    <td>
+                                        <span class="badge {% if initiative.status == 'active' %}bg-success{% else %}bg-danger{% endif %}">
+                                            {{ initiative.status|capfirst }}
+                                        </span>
+                                    </td>
+                                    <td><a href="{% url 'edit_initiative' initiative.id %}" class="btn btn-warning btn-sm">Edit</a></td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#adminDeleteInitiativeModal{{ initiative.id }}">Delete</button>
+                                    </td>
+                                </tr>
+
+                                <!-- Delete Confirmation Modal -->
+                                <div class="modal fade" id="adminDeleteInitiativeModal{{ initiative.id }}" tabindex="-1" aria-labelledby="adminDeleteInitiativeModalLabel{{ initiative.id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="adminDeleteInitiativeModalLabel{{ initiative.id }}">Confirm Deletion</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure you want to delete the initiative "{{ initiative.title }}"?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <form method="POST" action="{% url 'delete_initiative' initiative.id %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center">No initiatives available.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Backend Dashboard -->
+    <div id="backendDashboard" class="backend-container" style="display: none;">
+        <!-- Header -->
+        <header class="backend-header">
+            <div class="container-fluid d-flex justify-content-between align-items-center">
+                <h3 class="header-title">POSITIVITY A_Z | Manage Dashboard</h3>
+                <div class="user-greeting">
+                    <span>Hi, {{ user.full_name }} | </span>
+                    <a href="{% url 'logout' %}" class="logout-link">Logout</a>
+                </div>
+            </div>
+        </header>
+
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-md-2 sidebar">
+                    <ul>
+                        <li><a href="{% url 'combined_dashboard' %}" class="active">Manage Home Page</a></li>
+                        <li><a href="{% url 'manage_about_us' %}">Manage About Us</a></li>
+                        <li><a href="#">Manage Our Work</a></li>
+                        <li><a href="#">Manage Features</a></li>
+                        <li><a href="#">Manage Projects</a></li>
+                        <li><a href="{% url 'manage_media' %}">Manage Media</a></li>
+                        <li><a href="#">Manage Campaign</a></li>
+                        <li><a href="#">Manage Blog</a></li>
+                    </ul>
+                </div>
+
+                <!-- Main Content -->
+                <div class="col-md-10 main-content">
+                    <!-- Tabs -->
+                    <div class="section-tabs">
+                        <a href="#backend-banner-slider" class="tab-btn">Manage Image Slider</a>
+                        <a href="#backend-vision-mission" class="tab-btn">Vision & Mission</a>
+                        <a href="#backend-statistics" class="tab-btn">Manage Statistics</a>
+                        <a href="#backend-initiatives" class="tab-btn">Manage Initiatives</a>
+                        <a href="{% url 'manage_media' %}" class="tab-btn">Manage Media</a>
+                    </div>
+
+                    <!-- Banner Slider Section -->
+                    <div id="backend-banner-slider" class="section">
+                        <h4>Manage Image Slider</h4>
+                        <div class="form-container">
+                            <img src="{% static 'images/thank-you.png' %}" alt="Thank You" class="thank-you-img">
+                            <form method="POST" action="{% url 'combined_dashboard' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="banner_form" value="1">
+                                {{ banner_form.as_p }}
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </form>
+                        </div>
+                        <table class="table table-bordered mt-4">
+                            <thead>
+                                <tr>
+                                    <th>Sr.No</th>
+                                    <th>Image</th>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Order</th>
+                                    <th>Status</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for banner in banners %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>
+                                        {% if banner.image_url %}
+                                            <img src="{{ banner.image_url }}" alt="{{ banner.title }}" width="100">
+                                        {% else %}
+                                            No Image
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ banner.title }}</td>
+                                    <td>{{ banner.description }}</td>
+                                    <td>{{ banner.order|default:"0" }}</td>
+                                    <td>{{ banner.status|yesno:"Active,Inactive" }}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#backendEditBannerModal{{ banner.id }}">Edit</button>
+                                        <div class="modal fade" id="backendEditBannerModal{{ banner.id }}" tabindex="-1" aria-labelledby="backendEditBannerModalLabel{{ banner.id }}" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="backendEditBannerModalLabel{{ banner.id }}">Edit Banner</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form method="POST" action="{% url 'edit_banner' banner.id %}">
+                                                            {% csrf_token %}
+                                                            {{ banner_form.as_p }}
+                                                            <button type="submit" class="btn btn-primary">Update</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#backendDeleteBannerModal{{ banner.id }}">Delete</button>
+                                        <div class="modal fade" id="backendDeleteBannerModal{{ banner.id }}" tabindex="-1" aria-labelledby="backendDeleteBannerModalLabel{{ banner.id }}" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="backendDeleteBannerModalLabel{{ banner.id }}">Confirm Deletion</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Are you sure you want to delete the banner "{{ banner.title }}"?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                        <form method="POST" action="{% url 'delete_banner' banner.id %}">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center">No banners available.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Vision & Mission Section -->
+                    <div id="backend-vision-mission" class="section">
+                        <h4>Vision & Mission</h4>
+                        <div class="form-container">
+                            <img src="{% static 'images/thank-you.png' %}" alt="Thank You" class="thank-you-img">
+                            <form method="POST" action="{% url 'manage_vision_mission' %}">
+                                {% csrf_token %}
+                                {{ vision_mission_form.as_p }}
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </form>
+                        </div>
+                        <table class="table table-bordered mt-4">
+                            <thead>
+                                <tr>
+                                    <th>Sr.No</th>
+                                    <th>Vision Title</th>
+                                    <th>Vision Description</th>
+                                    <th>Mission Title</th>
+                                    <th>Mission Description</th>
+                                    <th>Last Updated</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for vm in vision_missions %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ vm.vision_title }}</td>
+                                    <td>{{ vm.vision_description }}</td>
+                                    <td>{{ vm.mission_title }}</td>
+                                    <td>{{ vm.mission_description }}</td>
+                                    <td>{{ vm.last_updated }}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#backendEditVisionMissionModal{{ vm.id }}">Edit</button>
+                                        <div class="modal fade" id="backendEditVisionMissionModal{{ vm.id }}" tabindex="-1" aria-labelledby="backendEditVisionMissionModalLabel{{ vm.id }}" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="backendEditVisionMissionModalLabel{{ vm.id }}">Edit Vision & Mission</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form method="POST" action="{% url 'edit_vision_mission' vm.id %}">
+                                                            {% csrf_token %}
+                                                            {{ vision_mission_form.as_p }}
+                                                            <button type="submit" class="btn btn-primary">Update</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <form method="POST" action="{% url 'delete_vision_mission' vm.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this entry?');">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center">No vision & mission statements available.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Statistics Section -->
+                    <div id="backend-statistics" class="section">
+                        <h4>Manage Statistics</h4>
+                        <div class="form-container">
+                            <img src="{% static 'images/thank-you.png' %}" alt="Thank You" class="thank-you-img">
+                            <form method="POST" action="{% url 'manage_statistic' %}">
+                                {% csrf_token %}
+                                {{ statistic_form.as_p }}
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </form>
+                        </div>
+                        <table class="table table-bordered mt-4">
+                            <thead>
+                                <tr>
+                                    <th>Sr.No</th>
+                                    <th>Label</th>
+                                    <th>Value</th>
+                                    <th>Order</th>
+                                    <th>Status</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for stat in statistics %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ stat.label }}</td>
+                                    <td>{{ stat.value }}</td>
+                                    <td>{{ stat.order }}</td>
+                                    <td>{{ stat.status }}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#backendEditStatisticModal{{ stat.id }}">Edit</button>
+                                        <div class="modal fade" id="backendEditStatisticModal{{ stat.id }}" tabindex="-1" aria-labelledby="backendEditStatisticModalLabel{{ stat.id }}" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="backendEditStatisticModalLabel{{ stat.id }}">Edit Statistic</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form method="POST" action="{% url 'edit_statistic' stat.id %}">
+                                                            {% csrf_token %}
+                                                            {{ statistic_form.as_p }}
+                                                            <button type="submit" class="btn btn-primary">Update</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <form method="POST" action="{% url 'delete_statistic' stat.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this statistic?');">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center">No statistics available.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Initiatives Section -->
+                    <div id="backend-initiatives" class="section">
+                        <h4>Manage Initiatives</h4>
+                        <div class="form-container">
+                            <img src="{% static 'images/thank-you.png' %}" alt="Thank You" class="thank-you-img">
+                            <form method="POST" action="{% url 'manage_initiative' %}">
+                                {% csrf_token %}
+                                {{ initiative_form.as_p }}
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </form>
+                        </div>
+                        <table class="table table-bordered mt-4">
+                            <thead>
+                                <tr>
+                                    <th>Sr.No</th>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Image</th>
+                                    <th>Order</th>
+                                    <th>Status</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for initiative in initiatives %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ initiative.title }}</td>
+                                    <td>{{ initiative.description }}</td>
+                                    <td><img src="{{ initiative.image_url }}" alt="{{ initiative.title }}" width="100"></td>
+                                    <td>{{ initiative.order }}</td>
+                                    <td>{{ initiative.status }}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#backendEditInitiativeModal{{ initiative.id }}">Edit</button>
+                                        <div class="modal fade" id="backendEditInitiativeModal{{ initiative.id }}" tabindex="-1" aria-labelledby="backendEditInitiativeModalLabel{{ initiative.id }}" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="backendEditInitiativeModalLabel{{ initiative.id }}">Edit Initiative</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form method="POST" action="{% url 'edit_initiative' initiative.id %}">
+                                                            {% csrf_token %}
+                                                            {{ initiative_form.as_p }}
+                                                            <button type="submit" class="btn btn-primary">Update</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <form method="POST" action="{% url 'delete_initiative' initiative.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this initiative?');">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center">No initiatives available.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS and Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+
+<!-- Custom JavaScript for Dashboard Switching and Tab Functionality -->
+<script>
+    function switchDashboard() {
+        const dashboardSwitch = document.getElementById('dashboardSwitch');
+        const adminDashboard = document.getElementById('adminDashboard');
+        const backendDashboard = document.getElementById('backendDashboard');
+
+        if (dashboardSwitch.value === 'admin') {
+            adminDashboard.style.display = 'block';
+            backendDashboard.style.display = 'none';
+        } else {
+            adminDashboard.style.display = 'none';
+            backendDashboard.style.display = 'block';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Smooth scrolling for tab links in Admin Dashboard
+        document.querySelectorAll('.admin-container .nav-tabs .nav-link').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                if (href.startsWith('#')) {
+                    const targetId = href.substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        window.scrollTo({
+                            top: targetSection.offsetTop - 100,
+                            behavior: 'smooth'
+                        });
+
+                        // Update active tab
+                        document.querySelectorAll('.admin-container .nav-tabs .nav-link').forEach(link => {
+                            link.classList.remove('active');
+                        });
+                        this.classList.add('active');
+                    }
+                } else {
+                    window.location.href = href; // Navigate to the URL for Manage Media
+                }
+            });
+        });
+
+        // Smooth scrolling for tab links in Backend Dashboard
+        document.querySelectorAll('.backend-container .section-tabs .tab-btn').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                if (href.startsWith('#')) {
+                    const targetId = href.substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        window.scrollTo({
+                            top: targetSection.offsetTop - 100,
+                            behavior: 'smooth'
+                        });
+                    }
+                } else {
+                    window.location.href = href; // Navigate to the URL for Manage Media
+                }
+            });
+        });
+
+        // Highlight active sidebar link
+        const currentUrl = window.location.pathname;
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            if (link.getAttribute('href') === currentUrl) {
+                link.classList.add('active');
+            }
+        });
+
+        // Initialize dashboard based on user preference (default to Admin Dashboard)
+        switchDashboard();
+    });
+</script>
+{% endblock %}

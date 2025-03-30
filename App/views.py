@@ -12,6 +12,8 @@ from .forms import (
 from .models import AboutUs, TeamMember, Project
 from django.contrib import messages
 from functools import wraps
+from .models import PressRelease, Video, GalleryImage, MediaCoverage
+from .forms import PressReleaseForm, VideoForm, GalleryImageForm, MediaCoverageForm
 
 # Custom decorator to check if the user is logged in (based on session)
 def session_login_required(view_func):
@@ -623,6 +625,8 @@ def delete_team_member(request, team_member_id):
     messages.success(request, "Team member deleted successfully!")
     return redirect('manage_about_us')
 
+@session_login_required
+@admin_required
 def manage_projects(request):
     projects = Project.objects.all()
     if request.method == 'POST':
@@ -635,6 +639,8 @@ def manage_projects(request):
         form = ProjectForm()
     return render(request, 'authapp/manage_projects.html', {'projects': projects, 'project_form': form})
 
+@session_login_required
+@admin_required
 def edit_project(request, project_id):
     project = get_object_or_404(Project, id=project_id)
     if request.method == 'POST':
@@ -647,6 +653,8 @@ def edit_project(request, project_id):
         form = ProjectForm(instance=project)
     return render(request, 'authapp/edit_project.html', {'form': form, 'project': project})
 
+@session_login_required
+@admin_required
 def delete_project(request, project_id):
     project = get_object_or_404(Project, id=project_id)
     if request.method == 'POST':
@@ -654,3 +662,203 @@ def delete_project(request, project_id):
         messages.success(request, 'Project deleted successfully!')
         return redirect('manage_projects')
     return redirect('manage_projects')
+
+@session_login_required
+@admin_required
+def manage_media(request):
+    press_releases = PressRelease.objects.all()
+    videos = Video.objects.all()
+    images = GalleryImage.objects.all()
+    media_coverage = MediaCoverage.objects.all()
+
+    press_release_form = PressReleaseForm()
+    video_form = VideoForm()
+    image_form = GalleryImageForm()
+    media_coverage_form = MediaCoverageForm()
+
+    if request.method == 'POST':
+        if 'press_release_form' in request.POST:
+            press_release_form = PressReleaseForm(request.POST)
+            if press_release_form.is_valid():
+                press_release_form.save()
+                return redirect('manage_media')
+
+        elif 'video_form' in request.POST:
+            video_form = VideoForm(request.POST)
+            if video_form.is_valid():
+                video_form.save()
+                return redirect('manage_media')
+
+        elif 'image_form' in request.POST:
+            image_form = GalleryImageForm(request.POST, request.FILES)
+            if image_form.is_valid():
+                image_form.save()
+                return redirect('manage_media')
+
+        elif 'media_coverage_form' in request.POST:
+            media_coverage_form = MediaCoverageForm(request.POST)
+            if media_coverage_form.is_valid():
+                media_coverage_form.save()
+                return redirect('manage_media')
+
+    context = {
+        'press_releases': press_releases,
+        'videos': videos,
+        'images': images,
+        'media_coverage': media_coverage,
+        'press_release_form': press_release_form,
+        'video_form': video_form,
+        'image_form': image_form,
+        'media_coverage_form': media_coverage_form,
+        'user': request.user,
+    }
+    return render(request, 'authapp/manage_media.html', context)
+
+@session_login_required
+@admin_required
+def edit_press_release(request, id):
+    press_release = get_object_or_404(PressRelease, id=id)
+    if request.method == 'POST':
+        form = PressReleaseForm(request.POST, instance=press_release)
+        if form.is_valid():
+            form.save()
+            return redirect('manage_media')
+    return redirect('manage_media')
+
+@session_login_required
+@admin_required
+def delete_press_release(request, id):
+    press_release = get_object_or_404(PressRelease, id=id)
+    if request.method == 'POST':
+        press_release.delete()
+        return redirect('manage_media')
+    return redirect('manage_media')
+
+@session_login_required
+@admin_required
+def edit_video(request, id):
+    video = get_object_or_404(Video, id=id)
+    if request.method == 'POST':
+        form = VideoForm(request.POST, instance=video)
+        if form.is_valid():
+            form.save()
+            return redirect('manage_media')
+    return redirect('manage_media')
+
+@session_login_required
+@admin_required
+def delete_video(request, id):
+    video = get_object_or_404(Video, id=id)
+    if request.method == 'POST':
+        video.delete()
+        return redirect('manage_media')
+    return redirect('manage_media')
+
+@session_login_required
+@admin_required
+def edit_image(request, id):
+    image = get_object_or_404(GalleryImage, id=id)
+    if request.method == 'POST':
+        form = GalleryImageForm(request.POST, request.FILES, instance=image)
+        if form.is_valid():
+            form.save()
+            return redirect('manage_media')
+    return redirect('manage_media')
+
+@session_login_required
+@admin_required
+def delete_image(request, id):
+    image = get_object_or_404(GalleryImage, id=id)
+    if request.method == 'POST':
+        image.delete()
+        return redirect('manage_media')
+    return redirect('manage_media')
+
+@session_login_required
+@admin_required
+def edit_media_coverage(request, id):
+    coverage = get_object_or_404(MediaCoverage, id=id)
+    if request.method == 'POST':
+        form = MediaCoverageForm(request.POST, instance=coverage)
+        if form.is_valid():
+            form.save()
+            return redirect('manage_media')
+    return redirect('manage_media')
+
+@session_login_required
+@admin_required
+def delete_media_coverage(request, id):
+    coverage = get_object_or_404(MediaCoverage, id=id)
+    if request.method == 'POST':
+        coverage.delete()
+        return redirect('manage_media')
+    return redirect('manage_media')
+
+# Frontend: Media Page
+def media(request):
+    press_releases = PressRelease.objects.all()
+    videos = Video.objects.all()
+    images = GalleryImage.objects.all()
+    media_coverage = MediaCoverage.objects.all()
+
+    context = {
+        'press_releases': press_releases,
+        'videos': videos,
+        'images': images,
+        'media_coverage': media_coverage,
+    }
+    return render(request, 'authapp/media.html', context)
+
+@session_login_required
+@admin_required
+def combined_dashboard(request):
+    banners = Banner.objects.all()
+    vision_missions = VisionMission.objects.all()
+    statistics = Statistic.objects.all()
+    initiatives = Initiative.objects.all()
+
+    banner_form = BannerForm()
+    vision_mission_form = VisionMissionForm()
+    statistic_form = StatisticForm()
+    initiative_form = InitiativeForm()
+
+    if request.method == 'POST':
+        if 'banner_form' in request.POST:
+            banner_form = BannerForm(request.POST, request.FILES)
+            if banner_form.is_valid():
+                banner_form.save()
+                return redirect('combined_dashboard')
+
+        elif 'vision_mission_form' in request.POST:
+            vision_mission_form = VisionMissionForm(request.POST)
+            if vision_mission_form.is_valid():
+                vision_mission_form.save()
+                return redirect('combined_dashboard')
+
+        elif 'statistic_form' in request.POST:
+            statistic_form = StatisticForm(request.POST)
+            if statistic_form.is_valid():
+                statistic_form.save()
+                return redirect('combined_dashboard')
+
+        elif 'initiative_form' in request.POST:
+            initiative_form = InitiativeForm(request.POST, request.FILES)
+            if initiative_form.is_valid():
+                initiative_form.save()
+                return redirect('combined_dashboard')
+
+    context = {
+        'banners': banners,
+        'vision_missions': vision_missions,
+        'statistics': statistics,
+        'initiatives': initiatives,
+        'banner_form': banner_form,
+        'vision_mission_form': vision_mission_form,
+        'statistic_form': statistic_form,
+        'initiative_form': initiative_form,
+        'vm_form': vision_mission_form,  # Alias for admin_page.html compatibility
+        'stat_form': statistic_form,     # Alias for admin_page.html compatibility
+        'init_form': initiative_form,    # Alias for admin_page.html compatibility
+        'user': request.user,
+    }
+    return render(request, 'authapp/combined_dashboard.html', context)

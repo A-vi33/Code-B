@@ -1,0 +1,558 @@
+{% extends 'authapp/base.html' %}
+{% load static %}
+
+{% block title %}Manage Media - Positivity A-Z{% endblock %}
+
+{% block content %}
+<style>
+    /* General Reset and Base Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: #f8fafc;
+        font-family: 'Poppins', sans-serif;
+        color: #2d3748;
+        line-height: 1.6;
+    }
+
+    /* Sidebar Styling */
+    .sidebar {
+        background: linear-gradient(135deg, #4c78ff 0%, #1e3a8a 100%);
+        border-radius: 12px;
+        padding: 25px;
+        height: fit-content;
+        box-shadow: 0 6px 20px rgba(76, 120, 255, 0.15);
+        position: sticky;
+        top: 20px;
+    }
+
+    .sidebar a {
+        color: #ffffff;
+        font-weight: 500;
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        margin-bottom: 10px;
+        text-decoration: none;
+    }
+
+    .sidebar a:hover, .sidebar a.active {
+        background-color: rgba(255, 255, 255, 0.25);
+        transform: translateX(5px);
+    }
+
+    /* Header Styling */
+    .header {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        padding: 20px 35px;
+        border-left: 5px solid #4c78ff;
+    }
+
+    .header h3 {
+        font-weight: 700;
+        color: #4c78ff;
+        letter-spacing: 0.5px;
+    }
+
+    /* Card Styling */
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        margin-bottom: 35px;
+        background: #ffffff;
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-header {
+        background: linear-gradient(90deg, #f8fafc, #ffffff);
+        border-bottom: none;
+        padding: 25px;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .card-header h4 {
+        font-weight: 700;
+        color: #2d3748;
+        margin: 0;
+    }
+
+    /* Form Elements */
+    .form-control, .form-select {
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+        padding: 12px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #4c78ff;
+        box-shadow: 0 0 8px rgba(76, 120, 255, 0.25);
+        outline: none;
+    }
+
+    .btn-primary {
+        background: #4c78ff;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background: #3b5ce0;
+        transform: translateY(-2px);
+    }
+
+    .btn-warning, .btn-danger {
+        border-radius: 10px;
+        padding: 8px 18px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-warning {
+        background: #007bff;
+        border: none;
+    }
+
+    .btn-warning:hover {
+        background: #0056b3;
+        transform: translateY(-2px);
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        border: none;
+    }
+
+    .btn-danger:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+    }
+
+    /* Table Styling */
+    .table {
+        background: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .table th {
+        background: #f1f5f9;
+        color: #2d3748;
+        font-weight: 700;
+        padding: 15px;
+    }
+
+    .table td {
+        vertical-align: middle;
+        padding: 15px;
+    }
+
+    .table img {
+        max-width: 100px;
+        height: auto;
+        border-radius: 8px;
+    }
+
+    /* Modal Styling */
+    .modal-content {
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+        background: #4c78ff;
+        color: #ffffff;
+        border-radius: 12px 12px 0 0;
+        padding: 20px;
+    }
+
+    .modal-footer {
+        border-top: none;
+        padding: 15px 20px;
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <header class="header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h3>Positivity A-Z | Admin Dashboard</h3>
+            <div>
+                <span class="text-muted">Hi, {{ user.full_name }} | </span>
+                <a href="{% url 'logout' %}" class="text-primary fw-bold">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar and Content -->
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-2">
+            <div class="sidebar">
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'backend_page' %}">Manage Home Page</a></li>
+                    <li><a href="{% url 'manage_about_us' %}">Manage About Us</a></li>
+                    <li><a href="#">Manage Our Work</a></li>
+                    <li><a href="#">Manage Features</a></li>
+                    <li><a href="{% url 'manage_projects' %}">Manage Projects</a></li>
+                    <li><a href="{% url 'manage_media' %}" class="active">Manage Media</a></li>
+                    <li><a href="#">Manage Campaign</a></li>
+                    <li><a href="#">Manage Blog</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-10">
+            <!-- Press Releases Section -->
+            <div id="press-releases" class="card">
+                <div class="card-header">
+                    <h4>Press Releases</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{% url 'manage_media' %}" class="mb-4">
+                        {% csrf_token %}
+                        <input type="hidden" name="press_release_form" value="1">
+                        {{ press_release_form.as_p }}
+                        <button type="submit" class="btn btn-primary">Add Press Release</button>
+                    </form>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for press_release in press_releases %}
+                            <tr>
+                                <td>{{ press_release.title }}</td>
+                                <td>{{ press_release.date }}</td>
+                                <td>{{ press_release.description }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editPressReleaseModal{{ press_release.id }}">Edit</button>
+                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deletePressReleaseModal{{ press_release.id }}">Delete</button>
+                                    <!-- Edit Modal -->
+                                    <div class="modal fade" id="editPressReleaseModal{{ press_release.id }}" tabindex="-1" aria-labelledby="editPressReleaseModalLabel{{ press_release.id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="editPressReleaseModalLabel{{ press_release.id }}">Edit Press Release</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form method="POST" action="{% url 'edit_press_release' press_release.id %}">
+                                                        {% csrf_token %}
+                                                        {{ press_release_form.as_p }}
+                                                        <button type="submit" class="btn btn-primary">Update</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Delete Modal -->
+                                    <div class="modal fade" id="deletePressReleaseModal{{ press_release.id }}" tabindex="-1" aria-labelledby="deletePressReleaseModalLabel{{ press_release.id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="deletePressReleaseModalLabel{{ press_release.id }}">Confirm Deletion</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete the press release "{{ press_release.title }}"?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <form method="POST" action="{% url 'delete_press_release' press_release.id %}">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center">No press releases available.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Videos Section -->
+            <div id="videos" class="card">
+                <div class="card-header">
+                    <h4>Videos</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{% url 'manage_media' %}" class="mb-4">
+                        {% csrf_token %}
+                        <input type="hidden" name="video_form" value="1">
+                        {{ video_form.as_p }}
+                        <button type="submit" class="btn btn-primary">Add Video</button>
+                    </form>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Video</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for video in videos %}
+                            <tr>
+                                <td><a href="{{ video.url }}" target="_blank">View Video</a></td>
+                                <td>
+                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editVideoModal{{ video.id }}">Edit</button>
+                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteVideoModal{{ video.id }}">Delete</button>
+                                    <!-- Edit Modal -->
+                                    <div class="modal fade" id="editVideoModal{{ video.id }}" tabindex="-1" aria-labelledby="editVideoModalLabel{{ video.id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="editVideoModalLabel{{ video.id }}">Edit Video</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form method="POST" action="{% url 'edit_video' video.id %}">
+                                                        {% csrf_token %}
+                                                        {{ video_form.as_p }}
+                                                        <button type="submit" class="btn btn-primary">Update</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Delete Modal -->
+                                    <div class="modal fade" id="deleteVideoModal{{ video.id }}" tabindex="-1" aria-labelledby="deleteVideoModalLabel{{ video.id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="deleteVideoModalLabel{{ video.id }}">Confirm Deletion</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete this video?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <form method="POST" action="{% url 'delete_video' video.id %}">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="2" class="text-center">No videos available.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Media Coverage Section -->
+            <div id="media-coverage" class="card">
+                <div class="card-header">
+                    <h4>Media Coverage</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{% url 'manage_media' %}" class="mb-4">
+                        {% csrf_token %}
+                        <input type="hidden" name="media_coverage_form" value="1">
+                        {{ media_coverage_form.as_p }}
+                        <button type="submit" class="btn btn-primary">Add Media Coverage</button>
+                    </form>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>URL</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for coverage in media_coverage %}
+                            <tr>
+                                <td>{{ coverage.title }}</td>
+                                <td><a href="{{ coverage.url }}" target="_blank">View Article</a></td>
+                                <td>
+                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editMediaCoverageModal{{ coverage.id }}">Edit</button>
+                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteMediaCoverageModal{{ coverage.id }}">Delete</button>
+                                    <!-- Edit Modal -->
+                                    <div class="modal fade" id="editMediaCoverageModal{{ coverage.id }}" tabindex="-1" aria-labelledby="editMediaCoverageModalLabel{{ coverage.id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="editMediaCoverageModalLabel{{ coverage.id }}">Edit Media Coverage</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form method="POST" action="{% url 'edit_media_coverage' coverage.id %}">
+                                                        {% csrf_token %}
+                                                        {{ media_coverage_form.as_p }}
+                                                        <button type="submit" class="btn btn-primary">Update</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Delete Modal -->
+                                    <div class="modal fade" id="deleteMediaCoverageModal{{ coverage.id }}" tabindex="-1" aria-labelledby="deleteMediaCoverageModalLabel{{ coverage.id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="deleteMediaCoverageModalLabel{{ coverage.id }}">Confirm Deletion</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete this media coverage?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <form method="POST" action="{% url 'delete_media_coverage' coverage.id %}">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center">No media coverage available.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Image Gallery Section -->
+            <div id="image-gallery" class="card">
+                <div class="card-header">
+                    <h4>Image Gallery</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{% url 'manage_media' %}" enctype="multipart/form-data" class="mb-4">
+                        {% csrf_token %}
+                        <input type="hidden" name="image_form" value="1">
+                        {{ image_form.as_p }}
+                        <button type="submit" class="btn btn-primary">Add Image</button>
+                    </form>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for image in images %}
+                            <tr>
+                                <td><img src="{{ image.image.url }}" alt="Gallery Image"></td>
+                                <td>
+                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editImageModal{{ image.id }}">Edit</button>
+                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteImageModal{{ image.id }}">Delete</button>
+                                    <!-- Edit Modal -->
+                                    <div class="modal fade" id="editImageModal{{ image.id }}" tabindex="-1" aria-labelledby="editImageModalLabel{{ image.id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="card-header">
+                                                    <h5 class="modal-title" id="editImageModalLabel{{ image.id }}">Edit Image</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form method="POST" action="{% url 'edit_image' image.id %}" enctype="multipart/form-data">
+                                                        {% csrf_token %}
+                                                        {{ image_form.as_p }}
+                                                        <button type="submit" class="btn btn-primary">Update</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Delete Modal -->
+                                    <div class="modal fade" id="deleteImageModal{{ image.id }}" tabindex="-1" aria-labelledby="deleteImageModalLabel{{ image.id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="deleteImageModalLabel{{ image.id }}">Confirm Deletion</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete this image?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <form method="POST" action="{% url 'delete_image' image.id %}">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="2" class="text-center">No images available.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS and Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+
+<!-- Custom JavaScript for Sidebar Highlight -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const currentUrl = window.location.pathname;
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            if (link.getAttribute('href') === currentUrl) {
+                link.classList.add('active');
+            }
+        });
+    });
+</script>
+{% endblock %}

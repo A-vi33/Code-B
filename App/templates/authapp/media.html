@@ -1,0 +1,182 @@
+{% extends 'authapp/base.html' %}
+{% load static %}
+
+{% block title %}Media - Positivity A-Z{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+        line-height: 1.6;
+    }
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .header {
+        background-color: #fff;
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .header h1 {
+        font-size: 2rem;
+        margin: 0;
+        color: #007bff;
+    }
+    h4 {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 5px;
+    }
+    .section {
+        margin-bottom: 40px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    .table th,
+    .table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #dee2e6;
+    }
+    .table th {
+        background-color: #f1f3f5;
+        font-weight: bold;
+    }
+    .video-link,
+    .article-link {
+        color: #007bff;
+        text-decoration: none;
+    }
+    .video-link:hover,
+    .article-link:hover {
+        text-decoration: underline;
+    }
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+    }
+    .gallery-grid img {
+        width: 100%;
+        height: auto;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <h1>Media - Positivity A-Z</h1>
+    </div>
+
+    <!-- Press Releases Section -->
+    <div id="press-releases" class="section">
+        <h4>Press Releases</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Date</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for press_release in press_releases %}
+                <tr>
+                    <td>{{ press_release.title }}</td>
+                    <td>{{ press_release.date }}</td>
+                    <td>{{ press_release.description }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center">No press releases available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Media Coverage Section -->
+    <div id="media-coverage" class="section">
+        <h4>Media Coverage</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>URL</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for coverage in media_coverage %}
+                <tr>
+                    <td>{{ coverage.title }}</td>
+                    <td><a href="{{ coverage.url }}" target="_blank" class="article-link">View Article</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2" class="text-center">No media coverage available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Image Gallery Section -->
+    <div id="image-gallery" class="section">
+        <h4>Image Gallery</h4>
+        <div class="gallery-grid">
+            {% for image in images %}
+            <div class="gallery-item">
+                <img src="{{ image.image.url }}" alt="Gallery Image">
+            </div>
+            {% empty %}
+            <p class="text-center">No images available.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Videos Section -->
+    <div id="videos" class="section">
+        <h4>Videos</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Video</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for video in videos %}
+                <tr>
+                    <td><a href="{{ video.url }}" target="_blank" class="video-link">View Video</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td class="text-center">No videos available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+{% endblock %}

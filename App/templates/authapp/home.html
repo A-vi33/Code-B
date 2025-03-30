@@ -480,8 +480,7 @@
                         <li class="nav-item"><a class="nav-link" href="#work">Our Work</a></li>
                         <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
                         <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#media">Media</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#join">Join Us</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'media' %}">Media</a></li>                        <li class="nav-item"><a class="nav-link" href="#join">Join Us</a></li>
                         <li class="nav-item"><a class="nav-link" href="#campaign">Campaign</a></li>
                         <li class="nav-item"><a class="nav-link" href="#donate">Donate</a></li>
                         <li class="nav-item"><a class="nav-link" href="#blog">Blog</a></li>
@@ -658,6 +657,34 @@
                     <h3>$50,000+</h3>
                     <p>Funds Raised</p>
                 </div>
+            </div>
+        </div>
+    </div>
+</section>
+    <!-- Media Section -->
+<section id="media" class="initiatives fade-in">
+    <div class="container">
+        <h2>Media Highlights</h2>
+        <hr>
+        <p class="subtitle">Discover our latest press releases, media coverage, and more.</p>
+        <div class="initiatives-grid">
+            <div class="initiative">
+                <img src="https://via.placeholder.com/320x220" alt="Media Highlight 1">
+                <h3>Press Releases</h3>
+                <p>Stay updated with our latest announcements.</p>
+                <a href="{% url 'media' %}" class="btn btn-details">Explore Now</a>
+            </div>
+            <div class="initiative">
+                <img src="https://via.placeholder.com/320x220" alt="Media Highlight 2">
+                <h3>Media Coverage</h3>
+                <p>See where we’ve been featured.</p>
+                <a href="{% url 'media' %}" class="btn btn-details">Explore Now</a>
+            </div>
+            <div class="initiative">
+                <img src="https://via.placeholder.com/320x220" alt="Media Highlight 3">
+                <h3>Gallery & Videos</h3>
+                <p>Visual stories of our impact.</p>
+                <a href="{% url 'media' %}" class="btn btn-details">Explore Now</a>
             </div>
         </div>
     </div>

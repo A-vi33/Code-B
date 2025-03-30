@@ -1,6 +1,7 @@
 from django import forms
 from .models import User, AboutUs, TeamMember
 from .models import Banner, Statistic, Initiative, VisionMission, Project
+from .models import PressRelease, Video, GalleryImage, MediaCoverage
 
 class BannerForm(forms.ModelForm):
     class Meta:
@@ -220,3 +221,27 @@ class ProjectForm(forms.ModelForm):
             'start_date': forms.DateInput(attrs={'type': 'date'}),
             'end_date': forms.DateInput(attrs={'type': 'date'}),
         }
+
+class PressReleaseForm(forms.ModelForm):
+    class Meta:
+        model = PressRelease
+        fields = ['title', 'date', 'description']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+            'description': forms.Textarea(attrs={'rows': 3}),
+        }
+
+class VideoForm(forms.ModelForm):
+    class Meta:
+        model = Video
+        fields = ['url']
+
+class GalleryImageForm(forms.ModelForm):
+    class Meta:
+        model = GalleryImage
+        fields = ['image']
+
+class MediaCoverageForm(forms.ModelForm):
+    class Meta:
+        model = MediaCoverage
+        fields = ['title', 'url']
