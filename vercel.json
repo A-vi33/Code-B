@@ -1,5 +1,4 @@
 {
-  "version": 2,
   "builds": [
     {
       "src": "test_project/wsgi.py",
@@ -13,10 +12,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "test_project/wsgi.py",
-      "headers": {
-        "Cache-Control": "no-cache"
-      }
+      "dest": "test_project/wsgi.py"
     }
   ]
 }
