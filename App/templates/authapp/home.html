@@ -101,7 +101,7 @@
     }
 
     /* Section Styling */
-    .vision-mission, .statistics, .initiatives, .projects {
+    .vision-mission, .statistics, .initiatives, .projects, .blog {
         padding: 100px 0;
         background: rgba(255, 255, 255, 0.95);
         position: relative;
@@ -185,13 +185,13 @@
         color: #2c3e50;
     }
 
-    /* Initiatives */
-    .initiatives-grid {
+    /* Initiatives & Blog Common Styling */
+    .initiatives-grid, .blog-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
         gap: 40px;
     }
-    .initiative {
+    .initiative, .blog-post {
         background: rgba(255, 255, 255, 0.9);
         padding: 2rem;
         border-radius: 20px;
@@ -199,11 +199,11 @@
         text-align: center;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    .initiative:hover {
+    .initiative:hover, .blog-post:hover {
         transform: translateY(-15px);
         box-shadow: 0 18px 35px rgba(0, 0, 0, 0.2);
     }
-    .initiative img {
+    .initiative img, .blog-post img {
         width: 100%;
         height: 220px;
         object-fit: cover;
@@ -211,20 +211,20 @@
         margin-bottom: 1.5rem;
         transition: transform 0.3s ease;
     }
-    .initiative:hover img {
+    .initiative:hover img, .blog-post:hover img {
         transform: scale(1.05);
     }
-    .initiative h3 {
+    .initiative h3, .blog-post h3 {
         color: #ff6b6b;
         font-size: 1.8rem;
         font-weight: 600;
         margin-bottom: 10px;
     }
-    .initiative p {
+    .initiative p, .blog-post p {
         font-size: 1.1rem;
         color: #4a5568;
     }
-    .btn-details {
+    .btn-details, .btn-read-more {
         background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
         border: none;
         color: #ffffff;
@@ -234,13 +234,14 @@
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
+        text-decoration: none;
     }
-    .btn-details:hover {
+    .btn-details:hover, .btn-read-more:hover {
         background: linear-gradient(45deg, #e55a5a, #3db8b0);
         transform: scale(1.1);
         box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
     }
-    .btn-details::after {
+    .btn-details::after, .btn-read-more::after {
         content: '';
         position: absolute;
         top: 50%;
@@ -252,7 +253,7 @@
         transform: translate(-50%, -50%);
         transition: width 0.4s ease, height 0.4s ease;
     }
-    .btn-details:hover::after {
+    .btn-details:hover::after, .btn-read-more:hover::after {
         width: 200%;
         height: 200%;
     }
@@ -275,7 +276,7 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
-    .projects p.subtitle {
+    .projects p.subtitle, .blog p.subtitle {
         font-size: 1.2rem;
         color: #4a5568;
         text-align: center;
@@ -457,7 +458,7 @@
         h2 { font-size: 2.2rem; }
         .mission h3, .vision h3 { font-size: 1.6rem; }
         .stat h3 { font-size: 2.2rem; }
-        .initiative h3, .project h3 { font-size: 1.5rem; }
+        .initiative h3, .project h3, .blog-post h3 { font-size: 1.5rem; }
         .impact-stat h3 { font-size: 2rem; }
     }
 </style>
@@ -480,10 +481,11 @@
                         <li class="nav-item"><a class="nav-link" href="#work">Our Work</a></li>
                         <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
                         <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'media' %}">Media</a></li>                        <li class="nav-item"><a class="nav-link" href="#join">Join Us</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'media' %}">Media</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Join Us</a></li>
                         <li class="nav-item"><a class="nav-link" href="#campaign">Campaign</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#donate">Donate</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#blog">Blog</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'donate' %}">Donate</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'blog_list' %}">Blog</a></li>
                         <li class="nav-item"><a class="nav-link" href="#contact">Contact Us</a></li>
                         {% if request.session.user_id %}
                             <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}" onclick="return confirm('Are you sure you want to logout?');">Logout</a></li>
@@ -605,90 +607,133 @@
         </div>
     </section>
 
-<!-- Projects Section -->
-<section id="projects" class="projects fade-in">
-    <div class="container">
-        <h2>Our Projects</h2>
-        <p class="subtitle">Making a difference through our initiatives</p>
-        <div class="projects-grid">
-            {% for project in projects %}
-            <div class="project">
-                <img src="{{ project.image.url|default:'https://via.placeholder.com/320x220' }}" alt="{{ project.title }}">
-                <h3>{{ project.title }}</h3>
-                <p>{{ project.description }}</p>
-                <a href="#" class="btn btn-learn-more">Learn More</a>
+    <!-- Projects Section -->
+    <section id="projects" class="projects fade-in">
+        <div class="container">
+            <h2>Our Projects</h2>
+            <p class="subtitle">Making a difference through our initiatives</p>
+            <div class="projects-grid">
+                {% for project in projects %}
+                <div class="project">
+                    <img src="{{ project.image.url|default:'https://via.placeholder.com/320x220' }}" alt="{{ project.title }}">
+                    <h3>{{ project.title }}</h3>
+                    <p>{{ project.description }}</p>
+                    <a href="#" class="btn btn-learn-more">Learn More</a>
+                </div>
+                {% empty %}
+                <div class="project">
+                    <img src="https://via.placeholder.com/320x220" alt="Project 1">
+                    <h3>Project Title 1</h3>
+                    <p>A brief description of the project, its mission, and its impact.</p>
+                    <a href="#" class="btn btn-learn-more">Learn More</a>
+                </div>
+                <div class="project">
+                    <img src="https://via.placeholder.com/320x220" alt="Project 2">
+                    <h3>Project Title 2</h3>
+                    <p>A brief description of the project, its mission, and its impact.</p>
+                    <a href="#" class="btn btn-learn-more">Learn More</a>
+                </div>
+                <div class="project">
+                    <img src="https://via.placeholder.com/320x220" alt="Project 3">
+                    <h3>Project Title 3</h3>
+                    <p>A brief description of the project, its mission, and its impact.</p>
+                    <a href="#" class="btn btn-learn-more">Learn More</a>
+                </div>
+                {% endfor %}
             </div>
-            {% empty %}
-            <div class="project">
-                <img src="https://via.placeholder.com/320x220" alt="Project 1">
-                <h3>Project Title 1</h3>
-                <p>A brief description of the project, its mission, and its impact.</p>
-                <a href="#" class="btn btn-learn-more">Learn More</a>
-            </div>
-            <div class="project">
-                <img src="https://via.placeholder.com/320x220" alt="Project 2">
-                <h3>Project Title 2</h3>
-                <p>A brief description of the project, its mission, and its impact.</p>
-                <a href="#" class="btn btn-learn-more">Learn More</a>
-            </div>
-            <div class="project">
-                <img src="https://via.placeholder.com/320x220" alt="Project 3">
-                <h3>Project Title 3</h3>
-                <p>A brief description of the project, its mission, and its impact.</p>
-                <a href="#" class="btn btn-learn-more">Learn More</a>
-            </div>
-            {% endfor %}
-        </div>
 
-        <!-- Impact Section -->
-        <div class="impact-section">
-            <h2>Our Impact</h2>
-            <p class="subtitle">See how we are changing lives with your support</p>
-            <div class="impact-stats">
-                <div class="impact-stat">
-                    <h3>500+</h3>
-                    <p>People Helped</p>
-                </div>
-                <div class="impact-stat">
-                    <h3>300+</h3>
-                    <p>Volunteers Engaged</p>
-                </div>
-                <div class="impact-stat">
-                    <h3>$50,000+</h3>
-                    <p>Funds Raised</p>
+            <!-- Impact Section -->
+            <div class="impact-section">
+                <h2>Our Impact</h2>
+                <p class="subtitle">See how we are changing lives with your support</p>
+                <div class="impact-stats">
+                    <div class="impact-stat">
+                        <h3>500+</h3>
+                        <p>People Helped</p>
+                    </div>
+                    <div class="impact-stat">
+                        <h3>300+</h3>
+                        <p>Volunteers Engaged</p>
+                    </div>
+                    <div class="impact-stat">
+                        <h3>$50,000+</h3>
+                        <p>Funds Raised</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+
     <!-- Media Section -->
-<section id="media" class="initiatives fade-in">
-    <div class="container">
-        <h2>Media Highlights</h2>
-        <hr>
-        <p class="subtitle">Discover our latest press releases, media coverage, and more.</p>
-        <div class="initiatives-grid">
-            <div class="initiative">
-                <img src="https://via.placeholder.com/320x220" alt="Media Highlight 1">
-                <h3>Press Releases</h3>
-                <p>Stay updated with our latest announcements.</p>
-                <a href="{% url 'media' %}" class="btn btn-details">Explore Now</a>
-            </div>
-            <div class="initiative">
-                <img src="https://via.placeholder.com/320x220" alt="Media Highlight 2">
-                <h3>Media Coverage</h3>
-                <p>See where we’ve been featured.</p>
-                <a href="{% url 'media' %}" class="btn btn-details">Explore Now</a>
-            </div>
-            <div class="initiative">
-                <img src="https://via.placeholder.com/320x220" alt="Media Highlight 3">
-                <h3>Gallery & Videos</h3>
-                <p>Visual stories of our impact.</p>
-                <a href="{% url 'media' %}" class="btn btn-details">Explore Now</a>
+    <section id="media" class="initiatives fade-in">
+        <div class="container">
+            <h2>Media Highlights</h2>
+            <hr>
+            <p class="subtitle">Discover our latest press releases, media coverage, and more.</p>
+            <div class="initiatives-grid">
+                <div class="initiative">
+                    <img src="https://via.placeholder.com/320x220" alt="Media Highlight 1">
+                    <h3>Press Releases</h3>
+                    <p>Stay updated with our latest announcements.</p>
+                    <a href="{% url 'media' %}" class="btn btn-details">Explore Now</a>
+                </div>
+                <div class="initiative">
+                    <img src="https://via.placeholder.com/320x220" alt="Media Highlight 2">
+                    <h3>Media Coverage</h3>
+                    <p>See where we’ve been featured.</p>
+                    <a href="{% url 'media' %}" class="btn btn-details">Explore Now</a>
+                </div>
+                <div class="initiative">
+                    <img src="https://via.placeholder.com/320x220" alt="Media Highlight 3">
+                    <h3>Gallery & Videos</h3>
+                    <p>Visual stories of our impact.</p>
+                    <a href="{% url 'media' %}" class="btn btn-details">Explore Now</a>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+
+    <!-- Blog Section -->
+    <section id="blog" class="blog fade-in">
+        <div class="container">
+            <h2>Latest Blog Posts</h2>
+            <hr>
+            <p class="subtitle">Read our latest updates and stories</p>
+            <div class="blog-grid">
+                {% for post in blog_posts %}
+                <div class="blog-post">
+                    {% if post.image %}
+                    <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                    {% else %}
+                    <img src="https://via.placeholder.com/320x220" alt="Blog Post">
+                    {% endif %}
+                    <h3>{{ post.title }}</h3>
+                    <p>{{ post.content|truncatewords:30 }}</p>
+                    <a href="{% url 'blog_list' %}" class="btn btn-read-more">Read More</a>
+                </div>
+                {% empty %}
+                <div class="blog-post">
+                    <img src="https://via.placeholder.com/320x220" alt="Blog Post 1">
+                    <h3>Blog Post Title 1</h3>
+                    <p>A brief excerpt of the blog post content goes here...</p>
+                    <a href="{% url 'blog_list' %}" class="btn btn-read-more">Read More</a>
+                </div>
+                <div class="blog-post">
+                    <img src="https://via.placeholder.com/320x220" alt="Blog Post 2">
+                    <h3>Blog Post Title 2</h3>
+                    <p>A brief excerpt of the blog post content goes here...</p>
+                    <a href="{% url 'blog_list' %}" class="btn btn-read-more">Read More</a>
+                </div>
+                <div class="blog-post">
+                    <img src="https://via.placeholder.com/320x220" alt="Blog Post 3">
+                    <h3>Blog Post Title 3</h3>
+                    <p>A brief excerpt of the blog post content goes here...</p>
+                    <a href="{% url 'blog_list' %}" class="btn btn-read-more">Read More</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
 
     <!-- Footer Section -->
     <footer id="contact" class="fade-in">
@@ -696,7 +741,7 @@
             <div class="footer-content">
                 <div class="contact-us">
                     <h3>Contact Us</h3>
-                    <p>Address of the organization</p>
+                    <p>Building No-40, 4th Floor, 9th Block Jayanagr, Bangalore-69</p>
                     <p>Mobile: 9390338255</p>
                     <p>Email: witcherarjun@gmail.com</p>
                 </div>

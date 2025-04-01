@@ -1,7 +1,7 @@
 {% extends 'authapp/base.html' %}
 {% load static %}
 
-{% block title %}Media - Positivity A-Z{% endblock %}
+{% block title %}Blog - Positivity A-Z{% endblock %}
 
 {% block content %}
 <style>
@@ -14,11 +14,11 @@
         margin: 0;
         color: #2d3748;
     }
-    .media-container {
+    .blog-container {
         position: relative;
         z-index: 1;
     }
-    .media-container::before {
+    .blog-container::before {
         content: '';
         position: absolute;
         top: 0;
@@ -91,7 +91,7 @@
         opacity: 0;
     }
 
-    /* General Section */
+    /* Blog Section */
     .section {
         padding: 100px 0;
         background: rgba(255, 255, 255, 0.95);
@@ -119,51 +119,50 @@
         border-radius: 2px;
     }
 
-    /* Table Styling */
-    .media-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-        background: rgba(255, 255, 255, 0.9);
+    /* Blog Card Styling */
+    .blog-card {
+        border: none;
         border-radius: 20px;
         box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        margin-bottom: 2rem;
+        background: #ffffff;
+        transition: all 0.3s ease;
     }
-    .media-table th, .media-table td {
-        padding: 15px;
-        text-align: left;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    .blog-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     }
-    .media-table th {
-        background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-        color: #ffffff;
-        font-weight: 600;
-    }
-    .media-table a {
-        color: #ff6b6b;
-        text-decoration: none;
-        transition: color 0.3s ease;
-    }
-    .media-table a:hover {
-        color: #4ecdc4;
-        text-decoration: underline;
-    }
-
-    /* Gallery Grid */
-    .gallery-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 40px;
-        margin-top: 20px;
-    }
-    .gallery-grid img {
+    .blog-card img {
         width: 100%;
         height: auto;
-        border-radius: 20px;
-        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
-        transition: transform 0.3s ease;
+        border-radius: 20px 20px 0 0;
     }
-    .gallery-grid img:hover {
-        transform: scale(1.05);
+    .blog-card-body {
+        padding: 1.5rem;
+    }
+    .blog-card-body h2 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+    }
+    .blog-card-body p {
+        font-size: 1.1rem;
+        color: #4a5568;
+    }
+    .btn-donate {
+        background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+        border: none;
+        border-radius: 10px;
+        padding: 12px 25px;
+        font-weight: 600;
+        color: #ffffff;
+        transition: all 0.3s ease;
+    }
+    .btn-donate:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        text-decoration: none;
     }
 
     /* Footer */
@@ -211,12 +210,12 @@
     }
 
     /* Animations */
-    @keyframes fadeInDown {
-        0% { opacity: 0; transform: translateY(-30px); }
-        100% { opacity: 1; transform: translateY(0); }
-    }
     @keyframes fadeInUp {
         0% { opacity: 0; transform: translateY(30px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInDown {
+        0% { opacity: 0; transform: translateY(-30px); }
         100% { opacity: 1; transform: translateY(0); }
     }
     .fade-in {
@@ -225,15 +224,17 @@
 
     /* Responsive Design */
     @media (max-width: 768px) {
-        .intro-section h1 { font-size: 2.2rem; }
-        .intro-section p { font-size: 1rem; }
-        .section h2 { font-size: 2.2rem; }
-        .media-table th, .media-table td { font-size: 0.9rem; padding: 10px; }
-        .gallery-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+        .carousel-caption h5 { font-size: 1.8rem; }
+        .carousel-caption p { font-size: 1rem; }
+        h2 { font-size: 2.2rem; }
+        .mission h3, .vision h3 { font-size: 1.6rem; }
+        .stat h3 { font-size: 2.2rem; }
+        .initiative h3, .project h3, .blog-post h3 { font-size: 1.5rem; }
+        .impact-stat h3 { font-size: 2rem; }
     }
 </style>
 
-<div class="media-container">
+<div class="blog-container">
     <!-- Navbar -->
     <header>
         <nav class="navbar navbar-expand-lg sticky-top">
@@ -251,11 +252,11 @@
                         <li class="nav-item"><a class="nav-link" href="#work">Our Work</a></li>
                         <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
                         <li class="nav-item"><a class="nav-link" href="#project">Projects</a></li>
-                        <li class="nav-item"><a class="nav-link active" href="{% url 'media' %}">Media</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'media' %}">Media</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Join Us</a></li>
                         <li class="nav-item"><a class="nav-link" href="#campaign">Campaign</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'donate' %}">Donate</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'blog_list' %}">Blog</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="{% url 'blog_list' %}">Blog</a></li>
                         <li class="nav-item"><a class="nav-link" href="#contact">Contact Us</a></li>
                         {% if request.session.user_id %}
                             <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}" onclick="return confirm('Are you sure you want to logout?');">Logout</a></li>
@@ -270,111 +271,33 @@
 
     <!-- Intro Section -->
     <section class="intro-section fade-in">
-        <img src="{% static 'images/media-image.jpg' %}" alt="Intro Image" class="intro-image" style="width: 100%; height: auto; object-fit: cover; position: absolute; top: 0; left: 0; z-index: -1;">
+        <img src="{% static 'images/blog-image.jpg' %}" alt="Intro Image" class="intro-image" style="width: 100%; height: auto; object-fit: cover; position: absolute; top: 0; left: 0; z-index: -1;">
         <div class="container">
-            <h1>Media - Positivity A-Z</h1>
-            <p>Explore our latest press releases, media coverage, image gallery, and videos showcasing our impact and initiatives.</p>
+            <h1>Our Blog</h1>
+            <p>Stay updated with our latest stories, insights, and initiatives promoting positivity from A to Z.</p>
         </div>
     </section>
 
-    <!-- Press Releases Section -->
-    <section id="press-releases" class="section fade-in">
+    <!-- Blog Posts Section -->
+    <section class="section fade-in">
         <div class="container">
-            <h2>Press Releases</h2>
+            <h2>Blog Posts</h2>
             <hr>
-            <table class="media-table">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Date</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for press_release in press_releases %}
-                    <tr>
-                        <td>{{ press_release.title }}</td>
-                        <td>{{ press_release.date }}</td>
-                        <td>{{ press_release.description }}</td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="3">No press releases available.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <!-- Media Coverage Section -->
-    <section id="media-coverage" class="section fade-in">
-        <div class="container">
-            <h2>Media Coverage</h2>
-            <hr>
-            <table class="media-table">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>URL</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for coverage in media_coverage %}
-                    <tr>
-                        <td>{{ coverage.title }}</td>
-                        <td><a href="{{ coverage.url }}" target="_blank">View Article</a></td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="2">No media coverage available.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <!-- Image Gallery Section -->
-    <section id="image-gallery" class="section fade-in">
-        <div class="container">
-            <h2>Image Gallery</h2>
-            <hr>
-            <div class="gallery-grid">
-                {% for image in images %}
-                <div class="gallery-item">
-                    <img src="{{ image.image.url }}" alt="Gallery Image">
+            {% for post in blog_posts %}
+            <div class="blog-card">
+                {% if post.image %}
+                <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                {% endif %}
+                <div class="blog-card-body">
+                    <h2>{{ post.title }}</h2>
+                    <p>{{ post.content|truncatewords:50 }}</p>
+                    <p><small>Posted on: {{ post.created_at|date:"F d, Y" }}</small></p>
+                    <a href="{% url 'donate' %}?blog_id={{ post.id }}" class="btn-donate">Donate Now</a>
                 </div>
-                {% empty %}
-                <p>No images available.</p>
-                {% endfor %}
             </div>
-        </div>
-    </section>
-
-    <!-- Videos Section -->
-    <section id="videos" class="section fade-in">
-        <div class="container">
-            <h2>Videos</h2>
-            <hr>
-            <table class="media-table">
-                <thead>
-                    <tr>
-                        <th>Video</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for video in videos %}
-                    <tr>
-                        <td><a href="{{ video.url }}" target="_blank">View Video</a></td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td>No videos available.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            {% empty %}
+            <p>No blog posts available.</p>
+            {% endfor %}
         </div>
     </section>
 

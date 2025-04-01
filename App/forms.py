@@ -1,7 +1,7 @@
 from django import forms
 from .models import User, AboutUs, TeamMember
 from .models import Banner, Statistic, Initiative, VisionMission, Project
-from .models import PressRelease, Video, GalleryImage, MediaCoverage
+from .models import PressRelease, Video, GalleryImage, MediaCoverage, BlogPost, Donation
 
 class BannerForm(forms.ModelForm):
     class Meta:
@@ -245,3 +245,28 @@ class MediaCoverageForm(forms.ModelForm):
     class Meta:
         model = MediaCoverage
         fields = ['title', 'url']
+
+class BlogPostForm(forms.ModelForm):
+    class Meta:
+        model = BlogPost
+        fields = ['title', 'content', 'image', 'start_date', 'end_date', 'amount', 'is_published']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
+            'image': forms.FileInput(attrs={'class': 'form-control'}),
+            'start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'is_published': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
+class DonationForm(forms.ModelForm):
+    class Meta:
+        model = Donation
+        fields = ['full_name', 'email', 'phone_number', 'donation_amount']
+        widgets = {
+            'full_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'donation_amount': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+        }

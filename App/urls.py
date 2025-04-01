@@ -63,4 +63,12 @@ urlpatterns = [
     path('edit-media-coverage/<int:id>/', views.edit_media_coverage, name='edit_media_coverage'),
     path('delete-media-coverage/<int:id>/', views.delete_media_coverage, name='delete_media_coverage'),
     path('combined_dashboard/', views.combined_dashboard, name='combined_dashboard'),
+
+    # Blog
+    path('blog/', views.blog_list, name='blog_list'),
+    path('manage-blog/', views.manage_blog, name='manage_blog'),
+    path('edit-blog/<int:blog_id>/', views.edit_blog, name='edit_blog'),
+    path('delete-blog/<int:blog_id>/', views.delete_blog, name='delete_blog'),
+    path('donate/', views.donate, name='donate'),
+    path('verify-otp/', views.verify_otp, name='verify_otp'),
 ]

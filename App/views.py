@@ -1,6 +1,6 @@
 # App/views.py
 from django.contrib.auth.hashers import make_password, check_password
-from django.core.mail import send_mail
+import random
 from .forms import RegistrationForm, LoginForm, ForgotPasswordForm, ResetPasswordForm
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import User, Banner, VisionMission, Statistic, Initiative
@@ -12,8 +12,9 @@ from .forms import (
 from .models import AboutUs, TeamMember, Project
 from django.contrib import messages
 from functools import wraps
-from .models import PressRelease, Video, GalleryImage, MediaCoverage
-from .forms import PressReleaseForm, VideoForm, GalleryImageForm, MediaCoverageForm
+from .models import PressRelease, Video, GalleryImage, MediaCoverage, BlogPost, Donation
+from .forms import PressReleaseForm, VideoForm, GalleryImageForm, MediaCoverageForm, BlogPostForm, DonationForm
+from django.core.mail import send_mail
 
 # Custom decorator to check if the user is logged in (based on session)
 def session_login_required(view_func):
@@ -140,6 +141,7 @@ def home(request):
     statistics = Statistic.objects.filter(status='active').order_by('order')
     initiatives = Initiative.objects.filter(status='active').order_by('order')
     projects = Project.objects.filter(status='active').order_by('created_at')
+    blog_posts = BlogPost.objects.filter(is_published=True)[:3]
     print("Projects Query:", projects.query)  # Debug: Print the SQL query
     print("Projects:", projects)  # Debug: Print the queryset
     return render(request, 'authapp/home.html', {
@@ -148,6 +150,7 @@ def home(request):
         'statistics': statistics,
         'initiatives': initiatives,
         'projects': projects,
+        'blog_posts': blog_posts,
     })
 
 def logout_page(request):
@@ -862,3 +865,134 @@ def combined_dashboard(request):
         'user': request.user,
     }
     return render(request, 'authapp/combined_dashboard.html', context)
+
+
+def blog_list(request):
+    blog_posts = BlogPost.objects.filter(is_published=True)
+    return render(request, 'authapp/blog_list.html', {'blog_posts': blog_posts})
+
+
+def manage_blog(request):
+    blog_posts = BlogPost.objects.all()
+
+    if request.method == 'POST':
+        form = BlogPostForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Blog post added successfully!')
+            return redirect('manage_blog')
+    else:
+        form = BlogPostForm()
+
+    return render(request, 'authapp/manage_blog.html', {
+        'blog_posts': blog_posts,
+        'form': form
+    })
+
+
+def edit_blog(request, blog_id):
+    blog_post = get_object_or_404(BlogPost, id=blog_id)
+
+    if request.method == 'POST':
+        form = BlogPostForm(request.POST, request.FILES, instance=blog_post)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Blog post updated successfully!')
+            return redirect('manage_blog')
+    else:
+        form = BlogPostForm(instance=blog_post)
+
+    return render(request, 'authapp/edit_blog.html', {'form': form, 'blog_post': blog_post})
+
+def delete_blog(request, blog_id):
+    blog_post = get_object_or_404(BlogPost, id=blog_id)
+    if request.method == 'POST':
+        blog_post.delete()
+        messages.success(request, 'Blog post deleted successfully!')
+        return redirect('manage_blog')
+    return render(request, 'authapp/manage_blog.html')
+
+
+def donate(request):
+    blog_id = request.GET.get('blog_id')
+    blog_post = get_object_or_404(BlogPost, id=blog_id) if blog_id else BlogPost.objects.first()
+
+    if request.method == 'POST':
+        form = DonationForm(request.POST)
+        if form.is_valid():
+            full_name = form.cleaned_data['full_name']
+            email = form.cleaned_data['email']
+            phone_number = form.cleaned_data['phone_number']
+            donation_amount = form.cleaned_data['donation_amount']
+
+            # Generate OTP
+            otp = ''.join([str(random.randint(0, 9)) for _ in range(6)])
+            request.session['otp'] = otp
+            request.session['donation_data'] = {
+                'full_name': full_name,
+                'email': email,
+                'phone_number': phone_number,
+                'donation_amount': str(donation_amount),
+                'blog_post_id': blog_post.id if blog_post else None
+            }
+
+            # Send OTP (simulated via email for this example)
+            send_mail(
+                'Your OTP for Donation',
+                f'Your OTP is: {otp}',
+                'mohith202421@gmail.com',
+                [email],
+                fail_silently=False,
+            )
+
+            return render(request, 'authapp/donate.html', {
+                'otp_sent': True,
+                'full_name': full_name,
+                'email': email,
+                'phone_number': phone_number,
+                'donation_amount': donation_amount,
+                'blog_post': blog_post
+            })
+    else:
+        form = DonationForm()
+
+    return render(request, 'authapp/donate.html', {
+        'form': form,
+        'blog_post': blog_post
+    })
+
+
+def verify_otp(request):
+    if request.method == 'POST':
+        entered_otp = request.POST.get('otp')
+        stored_otp = request.session.get('otp')
+        donation_data = request.session.get('donation_data')
+
+        if entered_otp == stored_otp:
+            # Save donation to database
+            donation = Donation(
+                full_name=donation_data['full_name'],
+                email=donation_data['email'],
+                phone_number=donation_data['phone_number'],
+                donation_amount=donation_data['donation_amount'],
+                blog_post=BlogPost.objects.get(id=donation_data['blog_post_id']) if donation_data[
+                    'blog_post_id'] else None
+            )
+            donation.save()
+
+            # Clear session data
+            del request.session['otp']
+            del request.session['donation_data']
+
+            messages.success(request, 'Donation successful! Thank you for your support.')
+            return redirect('donate')
+        else:
+            messages.error(request, 'Invalid OTP. Please try again.')
+            return render(request, 'authapp/donate.html', {
+                'otp_sent': True,
+                'full_name': donation_data['full_name'],
+                'email': donation_data['email'],
+                'phone_number': donation_data['phone_number'],
+                'donation_amount': donation_data['donation_amount']
+            })
+    return redirect('donate')

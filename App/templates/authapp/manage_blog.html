@@ -1,0 +1,239 @@
+{% extends 'authapp/base.html' %}
+{% load static %}
+
+{% block title %}Manage Blog - Positivity A-Z{% endblock %}
+
+{% block content %}
+<style>
+    /* Same styling as manage_projects.html */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background-color: #f8fafc; font-family: 'Poppins', sans-serif; color: #2d3748; line-height: 1.6; }
+    .sidebar { 
+        background: linear-gradient(135deg, #4c78ff 0%, #1e3a8a 100%); 
+        border-radius: 12px; 
+        padding: 25px; 
+        height: fit-content; 
+        box-shadow: 0 6px 20px rgba(76, 120, 255, 0.15); 
+        position: sticky; 
+        top: 20px; 
+    }
+    .sidebar a { 
+        color: #ffffff; 
+        font-weight: 500; 
+        padding: 12px 20px; 
+        display: flex; 
+        align-items: center; 
+        border-radius: 8px; 
+        transition: all 0.3s ease; 
+        margin-bottom: 10px; 
+        text-decoration: none; 
+    }
+    .sidebar a:hover, .sidebar a.active { 
+        background-color: rgba(255, 255, 255, 0.25); 
+        transform: translateX(5px); 
+    }
+    .header { 
+        background: #ffffff; 
+        border-radius: 12px; 
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); 
+        padding: 20px 35px; 
+        border-left: 5px solid #4c78ff; 
+    }
+    .header h3 { font-weight: 700; color: #4c78ff; letter-spacing: 0.5px; }
+    .card { 
+        border: none; 
+        border-radius: 12px; 
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); 
+        margin-bottom: 35px; 
+        background: #ffffff; 
+        transition: all 0.3s ease; 
+    }
+    .card:hover { transform: translateY(-8px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12); }
+    .card-header { 
+        background: linear-gradient(90deg, #f8fafc, #ffffff); 
+        border-bottom: none; 
+        padding: 25px; 
+        border-radius: 12px 12px 0 0; 
+    }
+    .card-header h4 { font-weight: 700; color: #2d3748; margin: 0; }
+    .form-control { 
+        border-radius: 10px; 
+        border: 1px solid #d1d5db; 
+        padding: 12px; 
+        font-size: 0.95rem; 
+        transition: all 0.3s ease; 
+    }
+    .form-control:focus { 
+        border-color: #4c78ff; 
+        box-shadow: 0 0 8px rgba(76, 120, 255, 0.25); 
+        outline: none; 
+    }
+    .btn-primary { 
+        background: #4c78ff; 
+        border: none; 
+        border-radius: 10px; 
+        padding: 12px 25px; 
+        font-weight: 600; 
+        transition: all 0.3s ease; 
+    }
+    .btn-primary:hover { background: #3b5ce0; transform: translateY(-2px); }
+    .btn-warning, .btn-danger { 
+        border-radius: 10px; 
+        padding: 8px 18px; 
+        font-weight: 600; 
+        transition: all 0.3s ease; 
+    }
+    .btn-warning:hover, .btn-danger:hover { transform: translateY(-2px); }
+    .table { 
+        background: #ffffff; 
+        border-radius: 12px; 
+        overflow: hidden; 
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05); 
+    }
+    .table th { background: #f1f5f9; color: #2d3748; font-weight: 700; padding: 15px; }
+    .table td { vertical-align: middle; padding: 15px; }
+    .alert { border-radius: 10px; padding: 15px 20px; font-weight: 500; }
+    .alert-success { background: #d1fae5; color: #065f46; }
+    .alert-danger { background: #fee2e2; color: #991b1b; }
+</style>
+
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <header class="header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h3>Positivity A-Z | Admin Dashboard</h3>
+            <div>
+                <span class="text-muted">Hi, {{ user.full_name }} | </span>
+                <a href="{% url 'logout' %}" class="text-primary fw-bold">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Display Messages -->
+    {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Sidebar and Content -->
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-2">
+            <div class="sidebar">
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'backend_page' %}">Manage Home Page</a></li>
+                    <li><a href="{% url 'manage_about_us' %}">Manage About Us</a></li>
+                    <li><a href="#">Manage Our Work</a></li>
+                    <li><a href="#">Manage Features</a></li>
+                    <li><a href="{% url 'manage_projects' %}">Manage Projects</a></li>
+                    <li><a href="{% url 'manage_media' %}">Manage Media</a></li>
+                    <li><a href="#">Manage Campaign</a></li>
+                    <li><a href="{% url 'manage_blog' %}" class="active">Manage Blog</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-10">
+            <!-- Add Blog Post Form -->
+            <div class="card">
+                <div class="card-header">
+                    <h4>Add New Blog Post</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-primary">Save Blog Post</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Existing Blog Posts -->
+            <div class="card">
+                <div class="card-header">
+                    <h4>Existing Blog Posts</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Amount</th>
+                                <th>Created At</th>
+                                <th>Published</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for post in blog_posts %}
+                            <tr>
+                                <td>{{ post.title }}</td>
+                                <td>{{ post.start_date|date:"F d, Y"|default:"Not Set" }}</td>
+                                <td>{{ post.end_date|date:"F d, Y"|default:"Not Set" }}</td>
+                                <td>{{ post.amount|default:"Not Set" }}</td>
+                                <td>{{ post.created_at|date:"F d, Y" }}</td>
+                                <td>{{ post.is_published|yesno:"Yes,No" }}</td>
+                                <td>
+                                    <a href="{% url 'edit_blog' post.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteBlogModal{{ post.id }}">Delete</button>
+                                    <!-- Delete Modal -->
+                                    <div class="modal fade" id="deleteBlogModal{{ post.id }}" tabindex="-1" aria-labelledby="deleteBlogModalLabel{{ post.id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="deleteBlogModalLabel{{ post.id }}">Confirm Deletion</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete "{{ post.title }}"?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <form method="POST" action="{% url 'delete_blog' post.id %}">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center">No blog posts available.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS and Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+
+<!-- Custom JavaScript for Sidebar Highlight -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const currentUrl = window.location.pathname;
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            if (link.getAttribute('href') === currentUrl) {
+                link.classList.add('active');
+            }
+        });
+    });
+</script>
+{% endblock %}
