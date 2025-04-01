@@ -11,6 +11,13 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
+from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Hello from Vercel!"
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'moto.settings')
 
 application = get_wsgi_application()
